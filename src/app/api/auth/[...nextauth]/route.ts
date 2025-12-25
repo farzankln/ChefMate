@@ -8,86 +8,132 @@ import bcrypt from "bcryptjs";
 const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
 
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     }),
 
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null;
+        // Validate credentials exist
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        try {
+          // Find user by email
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email.toLowerCase() },
+          });
 
-        if (!user || !user.password) return null;
+          // Check if user exists and has a password (credentials user)
+          if (!user || !user.password || user.provider !== "credentials") {
+            return null;
+          }
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+          // Verify password
+          const isValidPassword = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
 
-        if (!isValid) return null;
+          if (!isValidPassword) {
+            return null;
+          }
 
-        return user;
+          // Return user data (excluding sensitive info)
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.image,
+          };
+        } catch (error) {
+          console.error("Credentials authorization error:", error);
+          return null;
+        }
       },
     }),
   ],
   session: {
     strategy: "jwt" as SessionStrategy,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  pages: {
+    signIn: "/login",
+    error: "/login",
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      // On initial sign in
-      if (user) {
-        // Store the provider from the account info
-        token.provider = account?.provider || "credentials";
+      // Initial sign in
+      if (user && account) {
+        token.provider = account.provider;
       }
 
-      // For OAuth users, update the user in database with provider info if needed
-      if (account && account.provider && user) {
+      // For OAuth users, ensure they exist in our database
+      if (account && account.provider && account.provider !== "credentials") {
         try {
-          await prisma.user.update({
-            where: { email: user.email! },
-            data: {
-              provider: account.provider,
-              image: user.image || null,
-              name: user.name || null,
-            },
+          const existingUser = await prisma.user.findUnique({
+            where: { email: token.email! },
           });
-        } catch {
-          // User might not exist yet, create them
-          if (account.provider !== "credentials") {
+
+          if (!existingUser) {
+            // Create user for OAuth provider
             await prisma.user.create({
               data: {
-                email: user.email!,
-                name: user.name || null,
-                image: user.image || null,
+                email: token.email!,
+                name: token.name || null,
+                image: token.picture || null,
                 provider: account.provider,
               },
             });
+          } else {
+            // Update existing user's provider info if needed
+            await prisma.user.update({
+              where: { email: token.email! },
+              data: {
+                provider: account.provider,
+                image: token.picture || existingUser.image,
+                name: token.name || existingUser.name,
+              },
+            });
           }
+        } catch (error) {
+          console.error("OAuth user sync error:", error);
+          // Don't fail the auth process for sync errors
         }
       }
 
       return token;
     },
     async session({ session, token }) {
-      // Pass the provider to the session
-      session.provider = token.provider;
+      // Pass provider to session
+      if (token.provider) {
+        session.provider = token.provider as string;
+      }
       return session;
     },
+    async signIn({ user, account, profile }) {
+      // Additional validation for OAuth providers
+      if (account && account.provider !== "credentials") {
+        // Ensure we have required user data
+        if (!user.email) {
+          return false;
+        }
+      }
+      return true;
+    },
   },
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
