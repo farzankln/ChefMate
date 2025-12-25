@@ -1,0 +1,23 @@
+import { PrismaClient } from "@prisma/client";
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+// Ensure DATABASE_URL is available
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL environment variable is not set");
+}
+
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    // MongoDB-specific configuration for Prisma 7.x
+    errorFormat: "pretty",
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "info", "warn", "error"]
+        : ["error"],
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
