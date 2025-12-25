@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
 }
 
 
@@ -16,4 +15,37 @@ model User {
   image     String?
   provider  String
   createdAt DateTime @default(now())
+  locks     Lock[]
+}
+
+model Post {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  thumbnail   String?
+  imageUrl    String?
+  author      String?
+  category    String?
+  prepTime    String?
+  cookTime    String?
+  servings    String?
+  difficulty  String?
+  tags        String[]
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  locks       Lock[]
+}
+
+model Lock {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  postId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, postId])
 }

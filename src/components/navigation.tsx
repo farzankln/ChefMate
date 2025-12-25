@@ -1,0 +1,271 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import Image from "next/image";
+
+interface NavigationProps {
+  className?: string;
+}
+
+export default function Navigation({ className = "" }: NavigationProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  const user = session?.user;
+  const isAuthenticated = status === "authenticated";
+
+  return (
+    <nav
+      className={`sticky top-0 z-50 bg-gray-900 border-b border-gray-800 shadow-lg ${className}`}
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="shrink-0">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md p-1"
+              aria-label="Chef Mate - Home"
+            >
+              <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+              </div>
+              <span className="text-xl font-bold hidden sm:block">
+                Chef Mate
+              </span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              <Link
+                href="/"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                aria-label="Home"
+              >
+                Home
+              </Link>
+
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    aria-label="Dashboard"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    aria-label="Sign out"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    aria-label="Sign in"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    aria-label="Create account"
+                  >
+                    Create Account
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* User Profile (Desktop) */}
+          {isAuthenticated && user && (
+            <div className="hidden md:block">
+              <div className="ml-4 flex items-center space-x-3">
+                {user.image ? (
+                  <Image
+                    src={user.image}
+                    alt={user.name || user.email || "User"}
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    {(user.name || user.email || "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="text-gray-300 text-sm">
+                  {user.name || user.email}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              name="button"
+              onClick={toggleMenu}
+              className="text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 inline-flex items-center justify-center p-2 rounded-md"
+              aria-expanded={isMenuOpen ? "true" : "false"}
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                className={`${isMenuOpen ? "hidden" : "block"} h-6 w-6`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              <svg
+                className={`${isMenuOpen ? "block" : "hidden"} h-6 w-6`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-800 border-t border-gray-700">
+          <Link
+            href="/"
+            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+            aria-label="Home"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Home
+          </Link>
+
+          {isAuthenticated ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                aria-label="Dashboard"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors w-full text-left"
+                aria-label="Sign out"
+              >
+                Sign Out
+              </button>
+
+              {/* User Profile (Mobile) */}
+              {user && (
+                <div className="border-t border-gray-700 pt-4 pb-3">
+                  <div className="flex items-center px-3">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt={user.name || user.email || "User"}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                        {(user.name || user.email || "U")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+                    )}
+                    <div className="ml-3">
+                      <div className="text-base font-medium text-white">
+                        {user.name || "User"}
+                      </div>
+                      <div className="text-sm text-gray-400">{user.email}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                aria-label="Sign in"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="bg-blue-600 text-white hover:bg-blue-700 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                aria-label="Create account"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Create Account
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
