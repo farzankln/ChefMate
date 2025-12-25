@@ -12,7 +12,7 @@ if (!process.env.DATABASE_URL) {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    // MongoDB-specific configuration for Prisma 7.x
+    // MongoDB-specific configuration for Prisma 4.x
     errorFormat: "pretty",
     log:
       process.env.NODE_ENV === "development"
