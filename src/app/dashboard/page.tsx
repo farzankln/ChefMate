@@ -1,7 +1,8 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { signOut } from "next-auth/react";
+"use client";
+
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 function getInitials(name: string | null | undefined): string {
   if (!name) return "U";
@@ -22,11 +23,21 @@ function getProviderColor(provider: string | null | undefined): string {
   return "bg-blue-500";
 }
 
-export default async function DashboardPage() {
-  const session = await getServerSession();
+export default function DashboardPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  if (status === "loading") {
+    return (
+      <div className="p-10 flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   if (!session) {
-    redirect("/login");
+    router.push("/login");
+    return null;
   }
 
   const user = session.user;
@@ -34,12 +45,20 @@ export default async function DashboardPage() {
   const provider = session.provider || "credentials";
   const userName = user?.name || user?.email || "User";
 
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: "/login" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <div className="p-10">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Welcome {userName}</h1>
         <button
-          onClick={() => signOut()}
+          onClick={handleLogout}
           className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
         >
           Logout
