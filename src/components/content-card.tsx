@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface Post {
@@ -18,95 +17,18 @@ interface Post {
   servings?: string;
   difficulty?: string;
   tags?: string[];
-  views: number;
   likes: number;
   createdAt: string;
 }
 
 interface ContentCardProps {
   post: Post;
-  onLikeToggle?: (postId: string, isLiked: boolean) => void;
-  onViewIncrement?: (postId: string) => void;
 }
 
-export default function ContentCard({
-  post,
-  onLikeToggle,
-  onViewIncrement,
-}: ContentCardProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [localViews, setLocalViews] = useState(post.views);
+export default function ContentCard({ post }: ContentCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [localImageError, setLocalImageError] = useState(false);
-  const { data: session } = useSession();
   const router = useRouter();
-
-  // Initialize like state from localStorage for anonymous users
-  useEffect(() => {
-    if (!session) {
-      const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
-      setIsLiked(likedPosts.includes(post.id));
-    }
-  }, [post.id, session]);
-
-  // Initialize views from localStorage for anonymous users
-  useEffect(() => {
-    if (!session) {
-      const storedViews = localStorage.getItem(`views_${post.id}`);
-      if (storedViews) {
-        setLocalViews(parseInt(storedViews, 10));
-      }
-    }
-  }, [post.id, session]);
-
-  const handleLikeClick = async () => {
-    setIsLoading(true);
-
-    try {
-      const newIsLiked = !isLiked;
-      setIsLiked(newIsLiked);
-
-      if (!session) {
-        // Handle anonymous user with localStorage
-        const likedPosts = JSON.parse(
-          localStorage.getItem("likedPosts") || "[]"
-        );
-        if (newIsLiked) {
-          likedPosts.push(post.id);
-        } else {
-          const index = likedPosts.indexOf(post.id);
-          if (index > -1) {
-            likedPosts.splice(index, 1);
-          }
-        }
-        localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-      } else {
-        // Handle authenticated user with API call
-        const response = await fetch("/api/posts/like", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            postId: post.id,
-            isLiked: newIsLiked,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to toggle like");
-        }
-      }
-
-      onLikeToggle?.(post.id, newIsLiked);
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      // Revert state on error
-      setIsLiked(!isLiked);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleCardClick = () => {
     // Navigate to recipe detail page
@@ -281,37 +203,11 @@ export default function ContentCard({
 
         {/* Actions */}
         <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-          {/* Views */}
+          {/* Like Counter */}
           <div className="flex items-center gap-1 text-sm text-gray-500">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-              <path
-                fillRule="evenodd"
-                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>{session ? post.views : localViews}</span>
-          </div>
-
-          {/* Like Button */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleLikeClick();
-            }}
-            disabled={isLoading}
-            className={`flex items-center gap-1 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-full px-2 py-1 ${
-              isLiked
-                ? "text-red-600 hover:text-red-700 bg-red-50"
-                : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-            } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-            aria-label={`${isLiked ? "Unlike" : "Like"} ${post.title}`}
-          >
             <svg
-              className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}
-              fill="none"
-              stroke="currentColor"
+              className="w-4 h-4 text-red-500"
+              fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
@@ -322,8 +218,8 @@ export default function ContentCard({
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
             </svg>
-            <span>{session ? post.likes : post.likes + (isLiked ? 1 : 0)}</span>
-          </button>
+            <span>{post.likes}</span>
+          </div>
         </div>
       </div>
     </article>

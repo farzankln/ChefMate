@@ -131,8 +131,7 @@ export function mapSpoonacularToPost(recipe: SpoonacularRecipe) {
         ? "Medium"
         : "Hard"),
     tags: recipe.diets.concat(recipe.cuisines.slice(0, 2)),
-    views: Math.floor(Math.random() * 2000) + 500, // Mock view count
-    likes: recipe.aggregatedLikes || Math.floor(Math.random() * 200) + 50,
+    likes: recipe.aggregatedLikes || 0,
     createdAt: new Date().toISOString(),
   };
 }
@@ -222,7 +221,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Medium",
       tags: ["pasta", "italian", "quick", "comfort-food"],
-      views: 1247,
       likes: 89,
       createdAt: new Date().toISOString(),
     },
@@ -240,7 +238,6 @@ function getMockRecipes() {
       servings: "6",
       difficulty: "Medium",
       tags: ["chicken", "curry", "indian", "spicy"],
-      views: 2156,
       likes: 156,
       createdAt: new Date().toISOString(),
     },
@@ -258,7 +255,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Easy",
       tags: ["beef", "mexican", "tacos", "family-friendly"],
-      views: 987,
       likes: 72,
       createdAt: new Date().toISOString(),
     },
@@ -276,7 +272,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Easy",
       tags: ["salad", "vegetarian", "mediterranean", "healthy"],
-      views: 543,
       likes: 45,
       createdAt: new Date().toISOString(),
     },

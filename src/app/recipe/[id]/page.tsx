@@ -63,7 +63,6 @@ interface RecipeDetail {
   servings?: string;
   difficulty?: string;
   tags: string[];
-  views: number;
   likes: number;
   createdAt: string;
   originalRecipe?: SpoonacularRecipeData;
@@ -277,7 +276,7 @@ export default function RecipeDetailPage() {
                 </p>
 
                 {/* Recipe Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {recipe.prepTime && (
                     <div className="text-center p-3 bg-gray-50 rounded-lg">
                       <svg
@@ -335,19 +334,18 @@ export default function RecipeDetailPage() {
                     <svg
                       className="w-6 h-6 text-red-600 mx-auto mb-1"
                       fill="currentColor"
-                      viewBox="0 0 20 20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                       <path
-                        fillRule="evenodd"
-                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                        clipRule="evenodd"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                       />
                     </svg>
-                    <p className="text-sm font-medium text-gray-900">Views</p>
-                    <p className="text-sm text-gray-600">
-                      {recipe.views.toLocaleString()}
-                    </p>
+                    <p className="text-sm font-medium text-gray-900">Likes</p>
+                    <p className="text-sm text-gray-600">{recipe.likes}</p>
                   </div>
                 </div>
 

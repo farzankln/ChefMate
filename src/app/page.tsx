@@ -18,7 +18,6 @@ interface Post {
   servings?: string;
   difficulty?: string;
   tags: string[];
-  views: number;
   likes: number;
   createdAt: string;
 }
@@ -46,38 +45,6 @@ export default function Home() {
 
     fetchRecipes();
   }, []);
-
-  const handleLikeToggle = (postId: string, isLiked: boolean) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.id === postId
-          ? { ...post, likes: isLiked ? post.likes + 1 : post.likes - 1 }
-          : post
-      )
-    );
-  };
-
-  const handleViewIncrement = async (postId: string) => {
-    try {
-      const response = await fetch("/api/posts/view", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId }),
-      });
-
-      if (response.ok) {
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === postId ? { ...post, views: post.views + 1 } : post
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error incrementing view count:", error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
@@ -113,8 +80,7 @@ export default function Home() {
             Featured Recipes
           </h2>
           <p className="text-lg text-gray-600">
-            Discover delicious recipes from around the world. Like and save your
-            favorites!
+            Discover delicious recipes from around the world.
           </p>
         </div>
 
@@ -151,12 +117,7 @@ export default function Home() {
         {/* Recipe Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {posts.map((post) => (
-            <ContentCard
-              key={post.id}
-              post={post}
-              onLikeToggle={handleLikeToggle}
-              onViewIncrement={handleViewIncrement}
-            />
+            <ContentCard key={post.id} post={post} />
           ))}
         </div>
 
