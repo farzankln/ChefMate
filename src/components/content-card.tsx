@@ -27,14 +27,12 @@ interface ContentCardProps {
   post: Post;
   onLikeToggle?: (postId: string, isLiked: boolean) => void;
   onViewIncrement?: (postId: string) => void;
-  isLocked?: boolean;
 }
 
 export default function ContentCard({
   post,
   onLikeToggle,
   onViewIncrement,
-  isLocked = false,
 }: ContentCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [localViews, setLocalViews] = useState(post.views);
@@ -192,26 +190,6 @@ export default function ContentCard({
             </span>
           )}
         </div>
-
-        {/* Lock indicator for authenticated users */}
-        {session && isLocked && (
-          <div className="absolute top-2 right-2">
-            <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-              <svg
-                className="w-4 h-4 text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-label="Locked recipe"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Content */}

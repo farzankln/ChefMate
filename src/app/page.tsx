@@ -156,7 +156,6 @@ export default function Home() {
               post={post}
               onLikeToggle={handleLikeToggle}
               onViewIncrement={handleViewIncrement}
-              isLocked={session ? false : false} // Will be implemented with locks API
             />
           ))}
         </div>

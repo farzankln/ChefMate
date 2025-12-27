@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // For now, just return success
     // In production, this would:
     // 1. Check if user has already liked the post
-    // 2. Update the Like/Lock table in database
+    // 2. Update the Like table in database
     // 3. Update the post's like count
     // 4. Return the updated like count
 
