@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ContentCard from "@/components/content-card";
 import { useSession } from "next-auth/react";
+import { getFeaturedRecipes } from "@/lib/spoonacular";
 
 interface Post {
   id: string;
@@ -22,159 +23,29 @@ interface Post {
   createdAt: string;
 }
 
-// Mock data for demonstration
-const mockPosts: Post[] = [
-  {
-    id: "1",
-    title: "Classic Spaghetti Carbonara",
-    description:
-      "A traditional Italian pasta dish made with eggs, cheese, pancetta, and black pepper. This authentic carbonara recipe is simple yet incredibly flavorful.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Mario",
-    category: "Italian",
-    prepTime: "10 min",
-    cookTime: "15 min",
-    servings: "4",
-    difficulty: "Medium",
-    tags: ["pasta", "italian", "quick", "comfort-food"],
-    views: 1247,
-    likes: 89,
-    createdAt: "2024-12-20T10:00:00Z",
-  },
-  {
-    id: "2",
-    title: "Homemade Chicken Tikka Masala",
-    description:
-      "Tender chicken pieces marinated in yogurt and spices, then cooked in a rich, creamy tomato-based sauce. Perfect with basmati rice or naan bread.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Priya",
-    category: "Indian",
-    prepTime: "30 min",
-    cookTime: "45 min",
-    servings: "6",
-    difficulty: "Medium",
-    tags: ["chicken", "indian", "spicy", "curry"],
-    views: 2156,
-    likes: 156,
-    createdAt: "2024-12-19T14:30:00Z",
-  },
-  {
-    id: "3",
-    title: "Perfect Chocolate Chip Cookies",
-    description:
-      "Soft, chewy chocolate chip cookies with crispy edges and melty chocolate chips. This foolproof recipe will become your go-to cookie recipe.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Baker Sarah",
-    category: "Dessert",
-    prepTime: "15 min",
-    cookTime: "12 min",
-    servings: "24 cookies",
-    difficulty: "Easy",
-    tags: ["cookies", "chocolate", "dessert", "baking"],
-    views: 3421,
-    likes: 234,
-    createdAt: "2024-12-18T09:15:00Z",
-  },
-  {
-    id: "4",
-    title: "Fresh Caesar Salad",
-    description:
-      "Crisp romaine lettuce, homemade croutons, and a classic Caesar dressing made from scratch. Topped with parmesan cheese and anchovies.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Laurent",
-    category: "Salad",
-    prepTime: "20 min",
-    cookTime: "0 min",
-    servings: "4",
-    difficulty: "Easy",
-    tags: ["salad", "healthy", "fresh", "quick"],
-    views: 987,
-    likes: 67,
-    createdAt: "2024-12-17T12:00:00Z",
-  },
-  {
-    id: "5",
-    title: "Beef Bourguignon",
-    description:
-      "A classic French beef stew made with red wine, pearl onions, mushrooms, and bacon. Slow-cooked to perfection for incredibly tender meat.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Antoine",
-    category: "French",
-    prepTime: "45 min",
-    cookTime: "2 hours",
-    servings: "6",
-    difficulty: "Hard",
-    tags: ["beef", "french", "stew", "wine"],
-    views: 1789,
-    likes: 145,
-    createdAt: "2024-12-16T16:45:00Z",
-  },
-  {
-    id: "6",
-    title: "Fresh Fish Tacos",
-    description:
-      "Light and flaky white fish with a crispy coating, served in warm tortillas with cabbage slaw, lime crema, and fresh cilantro.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Maria",
-    category: "Mexican",
-    prepTime: "25 min",
-    cookTime: "20 min",
-    servings: "4",
-    difficulty: "Medium",
-    tags: ["fish", "mexican", "tacos", "seafood"],
-    views: 1534,
-    likes: 112,
-    createdAt: "2024-12-15T11:20:00Z",
-  },
-  {
-    id: "7",
-    title: "Vegetarian Buddha Bowl",
-    description:
-      "A nutritious bowl packed with quinoa, roasted vegetables, avocado, and a tahini dressing. Perfect for a healthy and satisfying meal.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef Emma",
-    category: "Vegetarian",
-    prepTime: "20 min",
-    cookTime: "30 min",
-    servings: "2",
-    difficulty: "Easy",
-    tags: ["vegetarian", "healthy", "bowl", "quinoa"],
-    views: 2103,
-    likes: 189,
-    createdAt: "2024-12-14T13:30:00Z",
-  },
-  {
-    id: "8",
-    title: "Traditional Shepherd's Pie",
-    description:
-      "A hearty British classic with ground lamb and vegetables topped with creamy mashed potatoes and baked until golden brown.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80",
-    author: "Chef James",
-    category: "British",
-    prepTime: "30 min",
-    cookTime: "45 min",
-    servings: "6",
-    difficulty: "Medium",
-    tags: ["lamb", "comfort-food", "potatoes", "british"],
-    views: 1678,
-    likes: 134,
-    createdAt: "2024-12-13T18:00:00Z",
-  },
-];
-
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
-  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      try {
+        setLoading(true);
+        setError(null);
+        const recipes = await getFeaturedRecipes();
+        setPosts(recipes);
+      } catch (err) {
+        console.error("Error fetching recipes:", err);
+        setError(err instanceof Error ? err.message : "Failed to load recipes");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRecipes();
+  }, []);
 
   const handleLikeToggle = (postId: string, isLiked: boolean) => {
     setPosts((prevPosts) =>
@@ -242,7 +113,7 @@ export default function Home() {
             Featured Recipes
           </h2>
           <p className="text-lg text-gray-600">
-            Handpicked recipes that our community loves. Like and save your
+            Discover delicious recipes from around the world. Like and save your
             favorites!
           </p>
         </div>

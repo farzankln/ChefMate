@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Post {
   id: string;
@@ -40,6 +41,7 @@ export default function ContentCard({
   const [isLoading, setIsLoading] = useState(false);
   const [localImageError, setLocalImageError] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
 
   // Initialize like state from localStorage for anonymous users
   useEffect(() => {
@@ -109,15 +111,8 @@ export default function ContentCard({
   };
 
   const handleCardClick = () => {
-    if (!session) {
-      // Increment local view count for anonymous users
-      const newViews = localViews + 1;
-      setLocalViews(newViews);
-      localStorage.setItem(`views_${post.id}`, newViews.toString());
-    } else {
-      // Call API to increment view count for authenticated users
-      onViewIncrement?.(post.id);
-    }
+    // Navigate to recipe detail page
+    router.push(`/recipe/${post.id}`);
   };
 
   const formatTime = (timeStr?: string) => {
