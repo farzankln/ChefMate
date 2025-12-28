@@ -9,7 +9,7 @@ import {
   getSimilarRecipes,
   mapSpoonacularToPost,
 } from "@/lib/spoonacular";
-import ContentCard from "@/components/content-card";
+import { ContentCard } from "@/components/content-card";
 
 interface RecipeStep {
   number: number;

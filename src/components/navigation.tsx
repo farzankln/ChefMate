@@ -30,7 +30,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-gray-900 border-b border-gray-800 shadow-lg ${className}`}
+      className={`sticky top-0 z-50 bg-white border-b border-gray-200 shadow-lg ${className}`}
       role="navigation"
       aria-label="Main navigation"
     >
@@ -40,7 +40,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
           <div className="shrink-0">
             <Link
               href="/"
-              className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 rounded-md p-1"
+              className="flex items-center space-x-2 text-gray-900 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white rounded-md p-1"
               aria-label="Chef Mate - Home"
             >
               <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -70,7 +70,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
             <div className="ml-10 flex items-baseline space-x-4">
               <Link
                 href="/"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                 aria-label="Home"
               >
                 Home
@@ -80,14 +80,14 @@ export default function Navigation({ className = "" }: NavigationProps) {
                 <>
                   <Link
                     href="/dashboard"
-                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Dashboard"
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Sign out"
                   >
                     Sign Out
@@ -97,14 +97,14 @@ export default function Navigation({ className = "" }: NavigationProps) {
                 <>
                   <Link
                     href="/login"
-                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Sign in"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/register"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Create account"
                   >
                     Create Account
@@ -124,14 +124,14 @@ export default function Navigation({ className = "" }: NavigationProps) {
                     alt={user.name || user.email || "User"}
                     width={32}
                     height={32}
-                    className="rounded-full object-cover border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    className="rounded-full object-cover border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
                   />
                 ) : (
                   <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                     {(user.name || user.email || "U").charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span className="text-gray-300 text-sm">
+                <span className="text-gray-600 text-sm">
                   {user.name || user.email}
                 </span>
               </div>
@@ -141,10 +141,10 @@ export default function Navigation({ className = "" }: NavigationProps) {
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
-              name="button"
+              type="button"
               onClick={toggleMenu}
-              className="text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 inline-flex items-center justify-center p-2 rounded-md"
-              aria-expanded={isMenuOpen ? "true" : "false"}
+              className="text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white inline-flex items-center justify-center p-2 rounded-md"
+              aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
             >
               <svg
@@ -184,7 +184,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
 
       {/* Mobile menu */}
       <div className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-800 border-t border-gray-700">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50 border-t border-gray-200">
           <Link
             href="/"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
@@ -209,7 +209,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
                   handleLogout();
                   setIsMenuOpen(false);
                 }}
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors w-full text-left"
+                className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium transition-colors w-full text-left"
                 aria-label="Sign out"
               >
                 Sign Out
@@ -217,7 +217,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
 
               {/* User Profile (Mobile) */}
               {user && (
-                <div className="border-t border-gray-700 pt-4 pb-3">
+                <div className="border-t border-gray-200 pt-4 pb-3">
                   <div className="flex items-center px-3">
                     {user.image ? (
                       <Image
@@ -235,10 +235,10 @@ export default function Navigation({ className = "" }: NavigationProps) {
                       </div>
                     )}
                     <div className="ml-3">
-                      <div className="text-base font-medium text-white">
+                      <div className="text-base font-medium text-gray-900">
                         {user.name || "User"}
                       </div>
-                      <div className="text-sm text-gray-400">{user.email}</div>
+                      <div className="text-sm text-gray-600">{user.email}</div>
                     </div>
                   </div>
                 </div>

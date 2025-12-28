@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 
@@ -16,6 +16,7 @@ model User {
   image     String?
   provider  String
   createdAt DateTime @default(now())
+  savedPosts SavedPost[]
 
 }
 
@@ -36,5 +37,17 @@ model Post {
   likes       Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  savedBy     SavedPost[]
 
+}
+
+model SavedPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  postId    String   // Store external recipe IDs as strings (Spoonacular, etc.)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
 }

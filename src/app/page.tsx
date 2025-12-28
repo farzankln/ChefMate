@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ContentCard from "@/components/content-card";
-import { useSession } from "next-auth/react";
+import { ContentCard } from "@/components/content-card";
 import { getFeaturedRecipes } from "@/lib/spoonacular";
 
+// Re-export Post interface for compatibility
 interface Post {
   id: string;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   thumbnail?: string;
   imageUrl?: string;
   author?: string;
@@ -17,16 +17,17 @@ interface Post {
   cookTime?: string;
   servings?: string;
   difficulty?: string;
-  tags: string[];
-  likes: number;
-  createdAt: string;
+  tags?: string[];
+  views?: number;
+  likes?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
 
   useEffect(() => {
     async function fetchRecipes() {
