@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Post, Prisma } from "@prisma/client";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -32,7 +33,7 @@ export async function GET() {
       .map((sp) => sp.postId);
 
     // Fetch internal posts separately
-    let internalPosts = [];
+    let internalPosts: Post[] = [];
     if (internalPostIds.length > 0) {
       internalPosts = await prisma.post.findMany({
         where: {
@@ -81,8 +82,11 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(savedPost, { status: 201 });
-  } catch (error: any) {
-    if (error.code === "P2002") {
+  } catch (error: unknown) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
       return NextResponse.json(
         { error: "Post already saved" },
         { status: 409 }

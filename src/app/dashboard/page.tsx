@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Post } from "@prisma/client";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -30,7 +31,12 @@ export default async function DashboardPage() {
     session.user.id?.length
   );
 
-  let savedPosts;
+  let savedPosts: Array<{
+    id: string;
+    postId: string;
+    createdAt: Date;
+    post: Post | null;
+  }> = [];
   try {
     // First get saved post IDs for this user
     const savedPostRecords = await prisma.savedPost.findMany({
@@ -62,7 +68,7 @@ export default async function DashboardPage() {
     console.log("External recipes:", externalRecipeIds.length);
 
     // Fetch internal posts separately
-    let internalPosts = [];
+    let internalPosts: Post[] = [];
     if (internalPostIds.length > 0) {
       internalPosts = await prisma.post.findMany({
         where: {
