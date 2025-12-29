@@ -76,14 +76,14 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user, account }) {
       // Initial sign in
       if (user) {
-        token.id = user.id; 
+        token.id = user.id;
       }
 
       if (account) {
         token.provider = account.provider;
       }
 
-      // OAuth users sync 
+      // OAuth users sync
       if (account && account.provider !== "credentials") {
         try {
           const existingUser = await prisma.user.findUnique({
@@ -100,9 +100,9 @@ export const authOptions: AuthOptions = {
               },
             });
 
-            token.id = newUser.id; 
+            token.id = newUser.id;
           } else {
-            token.id = existingUser.id; 
+            token.id = existingUser.id;
 
             await prisma.user.update({
               where: { email: token.email! },
@@ -122,7 +122,7 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string; 
+        session.user.id = token.id as string;
       }
 
       if (token.provider) {
@@ -131,7 +131,7 @@ export const authOptions: AuthOptions = {
 
       return session;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       // Additional validation for OAuth providers
       if (account && account.provider !== "credentials") {
         // Ensure we have required user data

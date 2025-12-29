@@ -41,7 +41,10 @@ export async function GET() {
     return NextResponse.json(formattedPosts);
   } catch (error) {
     console.error("GET saved-posts error:", error);
-    return NextResponse.json({ error: "Failed to load saved posts" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load saved posts" },
+      { status: 500 }
+    );
   }
 }
 
@@ -53,7 +56,8 @@ export async function POST(req: Request) {
   }
 
   const { postId } = await req.json();
-  if (!postId) return NextResponse.json({ error: "postId is required" }, { status: 400 });
+  if (!postId)
+    return NextResponse.json({ error: "postId is required" }, { status: 400 });
 
   try {
     const { post: postData, source } = await getPostDataById(postId);
@@ -64,15 +68,22 @@ export async function POST(req: Request) {
 
     return NextResponse.json(savedPost, { status: 201 });
   } catch (error: unknown) {
+    // Handle Prisma unique constraint violation (P2002)
     if (
       error instanceof Error &&
-      (error as any).code === "P2002"
+      "code" in error &&
+      typeof error.code === "string" &&
+      error.code === "P2002"
     ) {
-      return NextResponse.json({ error: "Post already saved" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Post already saved" },
+        { status: 409 }
+      );
     }
 
     console.error("POST saved-posts error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to save post";
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to save post";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
