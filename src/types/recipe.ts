@@ -1,0 +1,84 @@
+export interface RecipeIngredient {
+  amount: number;
+  unit: string;
+  name: string;
+}
+
+export interface RecipeStep {
+  number: number;
+  step: string;
+  ingredients?: Array<{ name: string }>;
+  equipment?: Array<{ name: string }>;
+}
+
+export interface RecipeInstruction {
+  name: string;
+  steps: RecipeStep[];
+}
+
+export interface RecipeNutrient {
+  name: string;
+  amount: number;
+  unit: string;
+  percentOfDailyNeeds: number;
+}
+
+export interface RecipeNutrition {
+  nutrients: RecipeNutrient[];
+}
+
+export interface SpoonacularRecipe {
+  id: number;
+  title: string;
+  image: string;
+  imageType: string;
+  servings: number;
+  readyInMinutes: number;
+  pricePerServing: number;
+  aggregatedLikes: number;
+  healthScore: number;
+  spoonacularScore: number;
+  summary: string;
+  cuisines: string[];
+  dishTypes: string[];
+  diets: string[];
+  occasions: string[];
+  instructions: unknown[];
+  analyzedInstructions: RecipeInstruction[];
+  nutrition: RecipeNutrition;
+  author: string;
+  difficulty: string;
+  tags: string[];
+  extendedIngredients: RecipeIngredient[];
+}
+
+export interface Recipe {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  imageUrl: string;
+  author: string;
+  category: string;
+  prepTime: string;
+  cookTime: string;
+  servings: string;
+  difficulty: string;
+  tags: string[];
+  likes: number;
+  createdAt: Date;
+  originalRecipe?: SpoonacularRecipe;
+}
+
+export interface SimilarRecipe {
+  id: string;
+  title: string;
+  imageUrl: string;
+}
+
+export interface UseRecipeDetailReturn {
+  recipe: Recipe | null;
+  similarRecipes: SimilarRecipe[];
+  loading: boolean;
+  error: string | null;
+}

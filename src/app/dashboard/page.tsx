@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import EmptySavedRecipes from "@/components/dashboard/EmptySavedRecipes";
 import SavedRecipesList from "@/components/dashboard/SavedRecipesList";
-import { SavedPostData } from "@/components/dashboard/transformSavedPost";
+import { SavedPostData } from "@/lib/utils/transformSavedPost";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
