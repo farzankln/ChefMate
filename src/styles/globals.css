@@ -5,12 +5,6 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
 body {
   background: var(--background);
@@ -24,4 +18,17 @@ body {
 
 html {
   background-color: #ffffff;
+}
+
+/* Progress bar animation and transition styles */
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+  width: var(--progress-width, 0%);
+}
+
+/* Additional accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar {
+    transition: none;
+  }
 }

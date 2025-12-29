@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
 
-interface SavedPost {
+export interface SavedPost {
   id: string;
   userId: string;
   postId: string;

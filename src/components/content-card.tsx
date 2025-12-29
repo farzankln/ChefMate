@@ -1,10 +1,12 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import { useSavedPostsContext } from "./SavedPostsProvider";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import SaveSkeleton from "./SkeletonLoading";
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Post {
   id: string;
@@ -42,6 +44,7 @@ export function ContentCard({ post }: ContentCardProps) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [localImageError, setLocalImageError] = useState(false);
+  const router = useRouter();
 
   // Check if current post is saved by user
   const isSaved =
@@ -133,7 +136,7 @@ export function ContentCard({ post }: ContentCardProps) {
   }
 
   const handleCardClick = () => {
-    window.location.href = `/recipe/${post.id}`;
+    router.push(`/recipe/${post.id}`);
   };
 
   const handleSaveClick = () => {
@@ -183,7 +186,7 @@ export function ContentCard({ post }: ContentCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+          <div className="w-full h-full bg-linear-to-br from-orange-400 to-orange-600 flex items-center justify-center">
             <svg
               className="w-16 h-16 text-white opacity-80"
               fill="currentColor"
