@@ -7,21 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
   name      String?
-  email     String   @unique
+  email     String      @unique
   password  String?
   image     String?
   provider  String
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
   savedPosts SavedPost[]
-
 }
 
 model Post {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   thumbnail   String?
@@ -33,20 +31,36 @@ model Post {
   servings    String?
   difficulty  String?
   tags        String[]
-  views       Int      @default(0)
-  likes       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  savedBy     SavedPost[]
-
+  views       Int         @default(0)
+  likes       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model SavedPost {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
   userId    String   @db.ObjectId
-  postId    String   // Store external recipe IDs as strings (Spoonacular, etc.)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  postId    String   // internal OR external
+
+  // Snapshot of post data
+  title       String?
+  description String?
+  thumbnail   String?
+  imageUrl    String?
+  author      String?
+  category    String?
+  prepTime    String?
+  cookTime    String?
+  servings    String?
+  difficulty  String?
+  tags        String[]
+  likes       Int      @default(0)
+
+  source     String?  // "internal" | "spoonacular"
+
   createdAt DateTime @default(now())
 
   @@unique([userId, postId])

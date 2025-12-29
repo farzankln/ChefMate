@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Post, Prisma } from "@prisma/client";
+import { getPostDataById, mapPostToSavedPostData } from "@/lib/saved-posts";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -12,51 +12,36 @@ export async function GET() {
   }
 
   try {
-    // First get saved post IDs for this user
-    const savedPostRecords = await prisma.savedPost.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      select: {
-        id: true,
-        postId: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+    const savedPosts = await prisma.savedPost.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
     });
 
-    // Separate internal posts (valid ObjectIDs) from external recipe IDs
-    const internalPostIds = savedPostRecords
-      .filter((sp) => sp.postId.length === 24) // Valid ObjectID length
-      .map((sp) => sp.postId);
-
-    // Fetch internal posts separately
-    let internalPosts: Post[] = [];
-    if (internalPostIds.length > 0) {
-      internalPosts = await prisma.post.findMany({
-        where: {
-          id: {
-            in: internalPostIds,
-          },
-        },
-      });
-    }
-
-    // Combine results
-    const formattedPosts = savedPostRecords.map((record) => ({
-      ...record,
-      post: internalPosts.find((p) => p.id === record.postId) || null,
+    const formattedPosts = savedPosts.map((savedPost) => ({
+      id: savedPost.id,
+      postId: savedPost.postId,
+      createdAt: savedPost.createdAt,
+      source: savedPost.source,
+      post: {
+        title: savedPost.title,
+        description: savedPost.description,
+        thumbnail: savedPost.thumbnail,
+        imageUrl: savedPost.imageUrl,
+        author: savedPost.author,
+        category: savedPost.category,
+        prepTime: savedPost.prepTime,
+        cookTime: savedPost.cookTime,
+        servings: savedPost.servings,
+        difficulty: savedPost.difficulty,
+        tags: savedPost.tags,
+        likes: savedPost.likes,
+      },
     }));
 
     return NextResponse.json(formattedPosts);
   } catch (error) {
     console.error("GET saved-posts error:", error);
-    return NextResponse.json(
-      { error: "Failed to load saved posts" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to load saved posts" }, { status: 500 });
   }
 }
 
@@ -68,32 +53,26 @@ export async function POST(req: Request) {
   }
 
   const { postId } = await req.json();
-
-  if (!postId) {
-    return NextResponse.json({ error: "postId is required" }, { status: 400 });
-  }
+  if (!postId) return NextResponse.json({ error: "postId is required" }, { status: 400 });
 
   try {
+    const { post: postData, source } = await getPostDataById(postId);
+
     const savedPost = await prisma.savedPost.create({
-      data: {
-        userId: session.user.id,
-        postId,
-      },
+      data: mapPostToSavedPostData(postId, session.user.id, postData, source),
     });
 
     return NextResponse.json(savedPost, { status: 201 });
   } catch (error: unknown) {
     if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
+      error instanceof Error &&
+      (error as any).code === "P2002"
     ) {
-      return NextResponse.json(
-        { error: "Post already saved" },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: "Post already saved" }, { status: 409 });
     }
 
     console.error("POST saved-posts error:", error);
-    return NextResponse.json({ error: "Failed to save post" }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Failed to save post";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

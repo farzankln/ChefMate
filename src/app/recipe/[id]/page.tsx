@@ -77,34 +77,50 @@ export default function RecipeDetailPage() {
     "instructions" | "nutrition" | "ingredients"
   >("instructions");
 
-  useEffect(() => {
-    async function fetchRecipeDetails() {
-      if (!params.id) return;
+useEffect(() => {
+  async function fetchRecipeDetails() {
+    if (!params.id) return;
 
-      try {
-        setLoading(true);
-        setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
-        const recipeId = params.id as string;
-        const [recipeData, similarData] = await Promise.all([
-          getRecipeById(recipeId),
-          getSimilarRecipes(parseInt(recipeId), 4),
-        ]);
+      const recipeId = params.id as string;
 
-        setRecipe(recipeData);
-        setSimilarRecipes(similarData);
-      } catch (err) {
-        console.error("Error fetching recipe details:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load recipe details"
-        );
-      } finally {
+      // 1. بررسی snapshot ذخیره‌شده
+      const snapshot = savedPosts?.find(
+        (item: SavedPost) => item.postId === recipeId
+      )?.post;
+
+      if (snapshot) {
+        setRecipe(snapshot);
         setLoading(false);
+        return; // از API استفاده نمی‌کنیم چون snapshot موجود است
       }
-    }
 
-    fetchRecipeDetails();
-  }, [params.id]);
+      // 2. اگر snapshot نبود، fetch از API خارجی
+      const [recipeData, similarData] = await Promise.all([
+        getRecipeById(recipeId),
+        getSimilarRecipes(parseInt(recipeId), 4),
+      ]);
+
+      setRecipe(recipeData);
+      setSimilarRecipes(similarData);
+    } catch (err) {
+      console.error("Error fetching recipe details:", err);
+
+      // اگر snapshot نبود و API fail کرد → نمایش خطا
+      setError(
+        err instanceof Error ? err.message : "Failed to load recipe details"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchRecipeDetails();
+}, [params.id, savedPosts]);
+
 
   // Check if current recipe is saved by user
   const isSaved =

@@ -1,49 +1,47 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Post } from "@prisma/client";
 import { ContentCard } from "@/components/content-card";
 import { SavedPostsProvider } from "@/components/SavedPostsProvider";
-import { getRecipeById } from "@/lib/spoonacular";
 
-interface ExternalRecipeData {
-  recipeId: string;
-  originalRecipe?: unknown;
+interface SavedPostData {
   id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  imageUrl: string;
-  author: string;
-  category: string;
-  prepTime: string;
-  cookTime: string;
-  servings: string;
-  difficulty: string;
+  postId: string;
+  createdAt: Date;
+  source: string; // "internal" | "spoonacular"
+  title: string | null;
+  description: string | null;
+  thumbnail: string | null;
+  imageUrl: string | null;
+  author: string | null;
+  category: string | null;
+  prepTime: string | null;
+  cookTime: string | null;
+  servings: string | null;
+  difficulty: string | null;
   tags: string[];
   likes: number;
-  createdAt?: string;
 }
 
-// Transform Prisma Post to match ContentCard Post interface
-function transformPrismaPost(prismaPost: Post) {
+// تبدیل snapshot ذخیره‌شده به فرمت ContentCard
+function transformSavedPost(savedPost: SavedPostData) {
   return {
-    id: prismaPost.id,
-    title: prismaPost.title,
-    description: prismaPost.description,
-    thumbnail: prismaPost.thumbnail || undefined,
-    imageUrl: prismaPost.imageUrl || undefined,
-    author: prismaPost.author || undefined,
-    category: prismaPost.category || undefined,
-    prepTime: prismaPost.prepTime || undefined,
-    cookTime: prismaPost.cookTime || undefined,
-    servings: prismaPost.servings || undefined,
-    difficulty: prismaPost.difficulty || undefined,
-    tags: prismaPost.tags || [],
-    views: prismaPost.views || 0,
-    likes: prismaPost.likes || 0,
-    createdAt: prismaPost.createdAt,
-    updatedAt: prismaPost.updatedAt,
+    id: savedPost.postId,
+    title: savedPost.title || "Untitled Recipe",
+    description: savedPost.description || "No description available",
+    thumbnail: savedPost.thumbnail || undefined,
+    imageUrl: savedPost.imageUrl || undefined,
+    author: savedPost.author || "Unknown Author",
+    category: savedPost.category || "Miscellaneous",
+    prepTime: savedPost.prepTime || undefined,
+    cookTime: savedPost.cookTime || undefined,
+    servings: savedPost.servings || undefined,
+    difficulty: savedPost.difficulty || undefined,
+    tags: savedPost.tags || [],
+    views: 0,
+    likes: savedPost.likes || 0,
+    createdAt: savedPost.createdAt,
+    updatedAt: savedPost.createdAt,
   };
 }
 
@@ -65,106 +63,18 @@ export default async function DashboardPage() {
     );
   }
 
-  // Debug: Log the session user ID to see what we're getting
-  console.log(
-    "Session user ID:",
-    session.user.id,
-    "Type:",
-    typeof session.user.id,
-    "Length:",
-    session.user.id?.length
-  );
-
-  let savedPosts: Array<{
-    id: string;
-    postId: string;
-    createdAt: Date;
-    post: Post | null;
-  }> = [];
-
-  let externalRecipes: ExternalRecipeData[] = [];
+  let savedPosts: SavedPostData[] = [];
 
   try {
-    // First get saved post IDs for this user
-    const savedPostRecords = await prisma.savedPost.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      select: {
-        id: true,
-        postId: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    // گرفتن همه پست‌های ذخیره‌شده با snapshot
+    savedPosts = await prisma.savedPost.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+    }) as SavedPostData[];
 
-    console.log("Found saved post records:", savedPostRecords?.length || 0);
-
-    // Separate internal posts (valid ObjectIDs) from external recipe IDs
-    const internalPostIds = savedPostRecords
-      .filter((sp) => sp.postId.length === 24) // Valid ObjectID length
-      .map((sp) => sp.postId);
-
-    const externalRecipeIds = savedPostRecords
-      .filter((sp) => sp.postId.length !== 24) // External recipe IDs
-      .map((sp) => sp.postId);
-
-    console.log("Internal posts:", internalPostIds.length);
-    console.log("External recipes:", externalRecipeIds.length);
-
-    // Fetch internal posts separately
-    let internalPosts: Post[] = [];
-    if (internalPostIds.length > 0) {
-      internalPosts = await prisma.post.findMany({
-        where: {
-          id: {
-            in: internalPostIds,
-          },
-        },
-      });
-    }
-
-    // Fetch external recipes data
-    if (externalRecipeIds.length > 0) {
-      try {
-        const externalRecipePromises = externalRecipeIds.map(
-          async (recipeId) => {
-            try {
-              const recipeData = await getRecipeById(recipeId);
-              return {
-                recipeId,
-                ...recipeData,
-              };
-            } catch (error) {
-              console.warn(
-                `Failed to fetch external recipe ${recipeId}:`,
-                error
-              );
-              return null;
-            }
-          }
-        );
-
-        const externalRecipeResults = await Promise.all(externalRecipePromises);
-        externalRecipes = externalRecipeResults.filter(
-          Boolean
-        ) as ExternalRecipeData[];
-      } catch (error) {
-        console.error("Error fetching external recipes:", error);
-      }
-    }
-
-    // Combine results - for ContentCard, we'll map to a unified structure
-    savedPosts = savedPostRecords.map((record) => ({
-      ...record,
-      post: internalPosts.find((p) => p.id === record.postId) || null,
-    }));
-
-    console.log("Final saved posts:", savedPosts?.length || 0);
+    console.log("Found saved posts:", savedPosts.length);
   } catch (error) {
-    console.error("Error querying saved posts:", error);
+    console.error("Error fetching saved posts:", error);
     savedPosts = [];
   }
 
@@ -205,59 +115,9 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {savedPosts.map(({ post, postId }) => {
-                // Handle both internal posts (with post data) and external recipes (post is null)
-                if (!post) {
-                  // For external recipes, find the corresponding external recipe data
-                  const externalRecipe = externalRecipes.find(
-                    (recipe) => recipe.recipeId === postId
-                  );
-
-                  if (externalRecipe) {
-                    // Convert external recipe to ContentCard format
-                    const externalPost = {
-                      id: postId,
-                      title: externalRecipe.title,
-                      description: externalRecipe.description,
-                      imageUrl: externalRecipe.imageUrl,
-                      author: externalRecipe.author,
-                      category: externalRecipe.category,
-                      prepTime: externalRecipe.prepTime,
-                      cookTime: externalRecipe.cookTime,
-                      servings: externalRecipe.servings,
-                      difficulty: externalRecipe.difficulty,
-                      tags: externalRecipe.tags || [],
-                      likes: externalRecipe.likes || 0,
-                    };
-
-                    return <ContentCard key={postId} post={externalPost} />;
-                  } else {
-                    // Fallback for failed external recipe loads
-                    return (
-                      <div
-                        key={postId}
-                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
-                      >
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            External Recipe
-                          </h3>
-                          <p className="text-gray-600 text-sm mb-3">
-                            Recipe ID: {postId}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            This recipe is from an external source.
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  }
-                }
-
-                // Use ContentCard for internal posts
-                return (
-                  <ContentCard key={post.id} post={transformPrismaPost(post)} />
-                );
+              {savedPosts.map((savedPost) => {
+                const post = transformSavedPost(savedPost);
+                return <ContentCard key={savedPost.id} post={post} />;
               })}
             </div>
           )}
