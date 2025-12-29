@@ -59,7 +59,7 @@ interface RecipeDetail {
   difficulty?: string;
   tags: string[];
   likes: number;
-  createdAt: string;
+  createdAt: string | Date;
   originalRecipe?: SpoonacularRecipeData;
 }
 
@@ -77,50 +77,65 @@ export default function RecipeDetailPage() {
     "instructions" | "nutrition" | "ingredients"
   >("instructions");
 
-useEffect(() => {
-  async function fetchRecipeDetails() {
-    if (!params.id) return;
+  useEffect(() => {
+    async function fetchRecipeDetails() {
+      if (!params.id) return;
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      const recipeId = params.id as string;
+        const recipeId = params.id as string;
 
-      // 1. بررسی snapshot ذخیره‌شده
-      const snapshot = savedPosts?.find(
-        (item: SavedPost) => item.postId === recipeId
-      )?.post;
+        const snapshot = savedPosts?.find(
+          (item: SavedPost) => item.postId === recipeId
+        )?.post;
 
-      if (snapshot) {
-        setRecipe(snapshot);
+        if (snapshot) {
+          // Transform snapshot to match RecipeDetail interface
+          const transformedSnapshot: RecipeDetail = {
+            id: snapshot.id,
+            title: snapshot.title || "Untitled Recipe",
+            description: snapshot.description || "No description available",
+            thumbnail: snapshot.thumbnail,
+            imageUrl: snapshot.imageUrl,
+            author: snapshot.author,
+            category: snapshot.category,
+            prepTime: snapshot.prepTime,
+            cookTime: snapshot.cookTime,
+            servings: snapshot.servings,
+            difficulty: snapshot.difficulty,
+            tags: snapshot.tags || [],
+            likes: snapshot.likes || 0,
+            createdAt: snapshot.createdAt || new Date(),
+            originalRecipe: undefined, // Snapshot doesn't contain original recipe data
+          };
+
+          setRecipe(transformedSnapshot);
+          setLoading(false);
+          return; 
+        }
+
+        const [recipeData, similarData] = await Promise.all([
+          getRecipeById(recipeId),
+          getSimilarRecipes(parseInt(recipeId), 4),
+        ]);
+
+        setRecipe(recipeData);
+        setSimilarRecipes(similarData);
+      } catch (err) {
+        console.error("Error fetching recipe details:", err);
+
+        setError(
+          err instanceof Error ? err.message : "Failed to load recipe details"
+        );
+      } finally {
         setLoading(false);
-        return; // از API استفاده نمی‌کنیم چون snapshot موجود است
       }
-
-      // 2. اگر snapshot نبود، fetch از API خارجی
-      const [recipeData, similarData] = await Promise.all([
-        getRecipeById(recipeId),
-        getSimilarRecipes(parseInt(recipeId), 4),
-      ]);
-
-      setRecipe(recipeData);
-      setSimilarRecipes(similarData);
-    } catch (err) {
-      console.error("Error fetching recipe details:", err);
-
-      // اگر snapshot نبود و API fail کرد → نمایش خطا
-      setError(
-        err instanceof Error ? err.message : "Failed to load recipe details"
-      );
-    } finally {
-      setLoading(false);
     }
-  }
 
-  fetchRecipeDetails();
-}, [params.id, savedPosts]);
-
+    fetchRecipeDetails();
+  }, [params.id, savedPosts]);
 
   // Check if current recipe is saved by user
   const isSaved =
