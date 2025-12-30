@@ -39,12 +39,9 @@ model Post {
 
 model SavedPost {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-
   userId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   postId    String   // internal OR external
-
   // Snapshot of post data
   title       String?
   description String?
@@ -58,10 +55,11 @@ model SavedPost {
   difficulty  String?
   tags        String[]
   likes       Int      @default(0)
-
   source     String?  // "internal" | "spoonacular"
-
+  // Enhanced recipe data fields
+  ingredients   Json?   // Store ingredients as JSON array
+  instructions  Json?   // Store instructions as JSON array
+  nutrition     Json?   // Store nutrition data as JSON object
   createdAt DateTime @default(now())
-
   @@unique([userId, postId])
 }

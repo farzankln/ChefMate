@@ -1,48 +1,14 @@
 "use client";
 
+import type {
+  SavedPost,
+  SavedPostsContextType,
+  SavedPostsProviderProps,
+} from "@/types/context";
 import { createContext, useContext } from "react";
 import { useSavedPosts } from "@/hooks/useSavedPosts";
 
-export interface SavedPost {
-  id: string;
-  userId: string;
-  postId: string;
-  createdAt: Date;
-  post: {
-    id: string;
-    title?: string;
-    description?: string;
-    thumbnail?: string;
-    imageUrl?: string;
-    author?: string;
-    category?: string;
-    prepTime?: string;
-    cookTime?: string;
-    servings?: string;
-    difficulty?: string;
-    tags?: string[];
-    views?: number;
-    likes?: number;
-    createdAt?: Date;
-    updatedAt?: Date;
-  } | null; // Post might be null for external recipes
-}
-
-interface SavedPostsContextType {
-  savedPosts: SavedPost[];
-  isLoading: boolean;
-  isError: Error | null;
-  mutate: (
-    data?: SavedPost[] | ((current: SavedPost[]) => SavedPost[]),
-    options?: { revalidate?: boolean }
-  ) => Promise<SavedPost[] | undefined>;
-}
-
 const SavedPostsContext = createContext<SavedPostsContextType | null>(null);
-
-interface SavedPostsProviderProps {
-  children: React.ReactNode;
-}
 
 export function SavedPostsProvider({ children }: SavedPostsProviderProps) {
   const savedPostsState = useSavedPosts();

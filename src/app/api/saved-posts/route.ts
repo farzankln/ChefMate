@@ -20,9 +20,26 @@ export async function GET() {
     const formattedPosts = savedPosts.map((savedPost) => ({
       id: savedPost.id,
       postId: savedPost.postId,
+      userId: savedPost.userId,
       createdAt: savedPost.createdAt,
       source: savedPost.source,
+      title: savedPost.title,
+      description: savedPost.description,
+      thumbnail: savedPost.thumbnail,
+      imageUrl: savedPost.imageUrl,
+      author: savedPost.author,
+      category: savedPost.category,
+      prepTime: savedPost.prepTime,
+      cookTime: savedPost.cookTime,
+      servings: savedPost.servings,
+      difficulty: savedPost.difficulty,
+      tags: savedPost.tags,
+      // Enhanced recipe data fields
+      ingredients: savedPost.ingredients,
+      instructions: savedPost.instructions,
+      nutrition: savedPost.nutrition,
       post: {
+        id: savedPost.postId,
         title: savedPost.title,
         description: savedPost.description,
         thumbnail: savedPost.thumbnail,
@@ -34,7 +51,6 @@ export async function GET() {
         servings: savedPost.servings,
         difficulty: savedPost.difficulty,
         tags: savedPost.tags,
-        likes: savedPost.likes,
       },
     }));
 

@@ -1,10 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import EmptySavedRecipes from "@/components/dashboard/EmptySavedRecipes";
-import SavedRecipesList from "@/components/dashboard/SavedRecipesList";
-import { SavedPostData } from "@/lib/utils/transformSavedPost";
+import { SavedPostsProvider } from "@/components/SavedPostsProvider";
+import { DashboardClient } from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -24,51 +21,12 @@ export default async function DashboardPage() {
     );
   }
 
-  let savedPosts: SavedPostData[] = [];
-
-  try {
-    const rawSavedPosts = await prisma.savedPost.findMany({
-      where: { userId: session.user.id },
-      orderBy: { createdAt: "desc" },
-    });
-
-    // Transform raw database results to match SavedPostData interface
-    savedPosts = rawSavedPosts.map((post) => ({
-      id: post.id,
-      postId: post.postId,
-      createdAt: post.createdAt,
-      source: post.source || "unknown", // Provide fallback for null source
-      title: post.title,
-      description: post.description,
-      thumbnail: post.thumbnail,
-      imageUrl: post.imageUrl,
-      author: post.author,
-      category: post.category,
-      prepTime: post.prepTime,
-      cookTime: post.cookTime,
-      servings: post.servings,
-      difficulty: post.difficulty,
-      tags: post.tags || [],
-      likes: post.likes,
-    }));
-  } catch (error) {
-    console.error("Error fetching saved posts:", error);
-    savedPosts = [];
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <DashboardHeader
-          userName={session.user.name || session.user.email || "User"}
-          userImage={session.user.image || null}
-        />
-        {savedPosts.length === 0 ? (
-          <EmptySavedRecipes />
-        ) : (
-          <SavedRecipesList savedPosts={savedPosts} />
-        )}
-      </div>
-    </div>
+    <SavedPostsProvider>
+      <DashboardClient
+        userName={session.user.name || session.user.email || "User"}
+        userImage={session.user.image || null}
+      />
+    </SavedPostsProvider>
   );
 }

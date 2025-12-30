@@ -65,15 +65,16 @@ export interface Recipe {
   servings: string;
   difficulty: string;
   tags: string[];
-  likes: number;
   createdAt: Date;
   originalRecipe?: SpoonacularRecipe;
+  [key: string]: unknown;
 }
 
 export interface SimilarRecipe {
   id: string;
   title: string;
   imageUrl: string;
+  [key: string]: unknown;
 }
 
 export interface UseRecipeDetailReturn {
@@ -81,4 +82,5 @@ export interface UseRecipeDetailReturn {
   similarRecipes: SimilarRecipe[];
   loading: boolean;
   error: string | null;
+  setSavingState: (saving: boolean) => void;
 }

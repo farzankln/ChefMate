@@ -1,10 +1,9 @@
 "use client";
 
 import { ContentCard } from "@/components/content-card";
-import {
-  transformSavedPost,
-  SavedPostData,
-} from "@/lib/utils/transformSavedPost";
+import { transformSavedPost } from "@/lib/utils/transformSavedPost";
+import type { SavedPostData } from "@/types/utils";
+import { FiTag } from "react-icons/fi";
 
 interface SavedRecipesListProps {
   savedPosts: SavedPostData[];
@@ -14,11 +13,41 @@ export default function SavedRecipesList({
   savedPosts,
 }: SavedRecipesListProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {savedPosts.map((savedPost) => {
-        const post = transformSavedPost(savedPost);
-        return <ContentCard key={savedPost.id} post={post} />;
-      })}
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Your Saved Recipes
+          </h2>
+          <p className="text-gray-600 mt-1">
+            {savedPosts.length} recipe{savedPosts.length !== 1 ? "s" : ""} in
+            your collection
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <FiTag className="w-4 h-4" />
+          <span>Sorted by newest first</span>
+        </div>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {savedPosts.map((savedPost) => {
+          const post = transformSavedPost(savedPost);
+          return (
+            <div
+              key={savedPost.id}
+              className="transform transition-all duration-200 hover:scale-105"
+            >
+              <ContentCard post={post} />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom spacing for better UX */}
+      <div className="h-8"></div>
     </div>
   );
 }

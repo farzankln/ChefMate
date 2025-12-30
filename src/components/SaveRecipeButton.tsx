@@ -2,7 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import { useSavedPostsContext, SavedPost } from "@/components/SavedPostsProvider";
+import { useSavedPostsContext } from "@/components/SavedPostsProvider";
+import type { SavedPost } from "@/types/context";
 
 export default function SaveRecipeButton({ recipe }: any) {
   const { data: session } = useSession();
@@ -21,8 +22,7 @@ export default function SaveRecipeButton({ recipe }: any) {
     try {
       if (isSaved) {
         mutate(
-          (curr: SavedPost[]) =>
-            curr.filter((p) => p.postId !== recipe.id),
+          (curr: SavedPost[]) => curr.filter((p) => p.postId !== recipe.id),
           { revalidate: false }
         );
 
@@ -63,9 +63,7 @@ export default function SaveRecipeButton({ recipe }: any) {
     <button
       onClick={toggleSave}
       className={`px-4 py-2 rounded-lg font-medium transition ${
-        isSaved
-          ? "bg-blue-50 text-blue-600"
-          : "bg-gray-100 text-gray-600"
+        isSaved ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-600"
       }`}
     >
       {isSaved ? "Saved" : "Save"}

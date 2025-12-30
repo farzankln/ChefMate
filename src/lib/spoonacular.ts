@@ -1,3 +1,11 @@
+import type {
+  SpoonacularRecipe,
+  ComplexSearchParams,
+  RecipeInfoParams,
+  SpoonacularSearchResult,
+  SpoonacularSimilarRecipe,
+} from "@/types/api";
+
 const BASE_URL = "https://api.spoonacular.com";
 
 const apiKey = (process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY ||
@@ -6,12 +14,6 @@ const apiKey = (process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY ||
 if (!apiKey) {
   throw new Error("Spoonacular API key is missing");
 }
-
-type ComplexSearchParams = {
-  type?: string;
-  number?: number;
-  offset?: number;
-};
 
 export async function complexSearch(params: ComplexSearchParams) {
   const query = new URLSearchParams();
@@ -34,11 +36,6 @@ export async function complexSearch(params: ComplexSearchParams) {
   return res.json();
 }
 
-type RecipeInfoParams = {
-  ids: string;
-  includeNutrition?: boolean;
-};
-
 export async function getRecipeInformationBulk(params: RecipeInfoParams) {
   const query = new URLSearchParams();
   query.append("apiKey", apiKey);
@@ -58,50 +55,6 @@ export async function getRecipeInformationBulk(params: RecipeInfoParams) {
   }
 
   return res.json();
-}
-
-export interface SpoonacularRecipe {
-  id: number;
-  title: string;
-  image: string;
-  imageType: string;
-  servings: number;
-  readyInMinutes: number;
-  pricePerServing: number;
-  aggregatedLikes: number;
-  healthScore: number;
-  spoonacularScore: number;
-  summary: string;
-  cuisines: string[];
-  dishTypes: string[];
-  diets: string[];
-  occasions: string[];
-  winePairing: {
-    pairedWines: string[];
-    pairingText: string;
-    productMatches: unknown[];
-  };
-  instructions: unknown[];
-  analyzedInstructions: unknown[];
-  nutrition: {
-    nutrients: Array<{
-      name: string;
-      amount: number;
-      unit: string;
-      percentOfDailyNeeds: number;
-    }>;
-  };
-  tips: {
-    property: string;
-    value: string;
-  };
-  author: string;
-  difficulty: string;
-  tags: string[];
-}
-
-interface SearchResult {
-  id: number;
 }
 
 // Map Spoonacular recipe to our Post interface
@@ -131,7 +84,6 @@ export function mapSpoonacularToPost(recipe: SpoonacularRecipe) {
         ? "Medium"
         : "Hard"),
     tags: recipe.diets.concat(recipe.cuisines.slice(0, 2)),
-    likes: recipe.aggregatedLikes || 0,
     createdAt: new Date(),
   };
 }
@@ -151,7 +103,7 @@ export async function getFeaturedRecipes() {
 
     // Extract IDs and get detailed information
     const recipeIds = searchResult.results
-      .map((recipe: SearchResult) => recipe.id)
+      .map((recipe: SpoonacularSearchResult) => recipe.id)
       .join(",");
     const detailedRecipes = await getRecipeInformationBulk({ ids: recipeIds });
 
@@ -186,8 +138,7 @@ export async function getSimilarRecipes(recipeId: number, number: number = 4) {
       throw new Error("Failed to fetch similar recipes");
     }
 
-    const similarRecipes: Array<{ id: number; title: string }> =
-      await res.json();
+    const similarRecipes: SpoonacularSimilarRecipe[] = await res.json();
 
     // Get detailed information for each similar recipe
     const recipeIds = similarRecipes.map((recipe) => recipe.id).join(",");
@@ -221,7 +172,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Medium",
       tags: ["pasta", "italian", "quick", "comfort-food"],
-      likes: 89,
       createdAt: new Date(),
     },
     {
@@ -238,7 +188,6 @@ function getMockRecipes() {
       servings: "6",
       difficulty: "Medium",
       tags: ["chicken", "curry", "indian", "spicy"],
-      likes: 156,
       createdAt: new Date(),
     },
     {
@@ -255,7 +204,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Easy",
       tags: ["beef", "mexican", "tacos", "family-friendly"],
-      likes: 72,
       createdAt: new Date(),
     },
     {
@@ -272,7 +220,6 @@ function getMockRecipes() {
       servings: "4",
       difficulty: "Easy",
       tags: ["salad", "vegetarian", "mediterranean", "healthy"],
-      likes: 45,
       createdAt: new Date(),
     },
   ];
