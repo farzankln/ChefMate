@@ -13,7 +13,7 @@ export default function SavedRecipesList({
   savedPosts,
 }: SavedRecipesListProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-8 rounded-2xl shadow-xl bg-red-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -45,9 +45,6 @@ export default function SavedRecipesList({
           );
         })}
       </div>
-
-      {/* Bottom spacing for better UX */}
-      <div className="h-8"></div>
     </div>
   );
 }

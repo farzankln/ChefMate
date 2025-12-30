@@ -7,11 +7,7 @@ import Image from "next/image";
 import { LuChefHat } from "react-icons/lu";
 import { FiMenu, FiX } from "react-icons/fi";
 
-interface NavigationProps {
-  className?: string;
-}
-
-export default function Navigation({ className = "" }: NavigationProps) {
+export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session, status } = useSession();
 
@@ -32,7 +28,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
 
   return (
     <nav
-      className={`sticky top-0 z-50 bg-white border-b border-gray-200 shadow-lg ${className}`}
+      className="sticky top-0 z-50 bg-white shadow-lg"
       role="navigation"
       aria-label="Main navigation"
     >
