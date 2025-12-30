@@ -8,8 +8,6 @@ import {
   DashboardHeaderSkeleton,
   SavedRecipesGridSkeleton,
 } from "@/components/skeletons";
-import { transformSavedPost } from "@/lib/utils/transformSavedPost";
-import type { SavedPostData } from "@/types/utils";
 
 export function DashboardClient({
   userName,
@@ -42,25 +40,25 @@ export function DashboardClient({
           <EmptySavedRecipes />
         ) : (
           <SavedRecipesList
-            savedPosts={safeSavedPosts.map((post) => ({
-              id: post.id,
-              postId: post.postId,
-              createdAt: post.createdAt,
+            savedPosts={safeSavedPosts.map((savedPost) => ({
+              id: savedPost.postId,
+              postId: savedPost.postId,
+              createdAt: savedPost.createdAt,
               source: "unknown",
-              title: post.post?.title || "",
-              description: post.post?.description || "",
-              thumbnail: post.post?.thumbnail || "",
-              imageUrl: post.post?.imageUrl || "",
-              author: post.post?.author || "",
-              category: post.post?.category || "",
-              prepTime: post.post?.prepTime || "",
-              cookTime: post.post?.cookTime || "",
-              servings: post.post?.servings || "",
-              difficulty: post.post?.difficulty || "",
-              tags: post.post?.tags || [],
-              ingredients: [],
-              instructions: [],
-              nutrition: null,
+              title: savedPost.post?.title || null,
+              description: savedPost.post?.description || null,
+              thumbnail: savedPost.post?.thumbnail || null,
+              imageUrl: savedPost.post?.imageUrl || null,
+              author: savedPost.post?.author || null,
+              category: savedPost.post?.category || null,
+              prepTime: savedPost.post?.prepTime || null,
+              cookTime: savedPost.post?.cookTime || null,
+              servings: savedPost.post?.servings || null,
+              difficulty: savedPost.post?.difficulty || null,
+              tags: savedPost.post?.tags || [],
+              ingredients: savedPost.ingredients,
+              instructions: savedPost.instructions,
+              nutrition: savedPost.nutrition,
             }))}
           />
         )}

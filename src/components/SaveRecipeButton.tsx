@@ -5,7 +5,15 @@ import toast from "react-hot-toast";
 import { useSavedPostsContext } from "@/components/SavedPostsProvider";
 import type { SavedPost } from "@/types/context";
 
-export default function SaveRecipeButton({ recipe }: any) {
+interface SaveRecipeButtonProps {
+  recipe: {
+    id: string;
+    title?: string;
+    [key: string]: unknown;
+  };
+}
+
+export default function SaveRecipeButton({ recipe }: SaveRecipeButtonProps) {
   const { data: session } = useSession();
   const { savedPosts, mutate } = useSavedPostsContext();
 
@@ -19,6 +27,19 @@ export default function SaveRecipeButton({ recipe }: any) {
       return;
     }
 
+    // Validate required recipe properties
+    if (!recipe?.id) {
+      toast.error("Invalid recipe data");
+      return;
+    }
+
+    // Ensure user ID exists
+    const userId = session.user?.id;
+    if (!userId) {
+      toast.error("User ID not found");
+      return;
+    }
+
     try {
       if (isSaved) {
         mutate(
@@ -26,14 +47,21 @@ export default function SaveRecipeButton({ recipe }: any) {
           { revalidate: false }
         );
 
-        await fetch(`/api/saved-posts/${recipe.id}`, { method: "DELETE" });
+        const response = await fetch(`/api/saved-posts/${recipe.id}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         toast.success("Removed from saved recipes");
       } else {
         mutate(
           (curr: SavedPost[]) => [
             {
               id: `temp-${Date.now()}`,
-              userId: session.user.id,
+              userId: userId,
               postId: recipe.id,
               createdAt: new Date(),
               post: recipe,
@@ -43,18 +71,23 @@ export default function SaveRecipeButton({ recipe }: any) {
           { revalidate: false }
         );
 
-        await fetch("/api/saved-posts", {
+        const response = await fetch("/api/saved-posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ postId: recipe.id }),
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         toast.success("Recipe saved");
       }
 
       mutate();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      console.error("Save recipe error:", error);
+      toast.error("Something went wrong. Please try again.");
       mutate();
     }
   };

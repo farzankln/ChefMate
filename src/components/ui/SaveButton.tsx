@@ -135,7 +135,9 @@ export function SaveButton({
         type="button"
         onClick={toggleSave}
         disabled={loading}
-        className={`p-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+        className={`${
+          sizeClasses[size]
+        } rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
           isSaved
             ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
             : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
@@ -143,7 +145,7 @@ export function SaveButton({
         aria-label={`${isSaved ? "Unsave" : "Save"} ${recipe.title}`}
       >
         <FiBookmark
-          className={`w-4 h-4 transition-colors ${
+          className={`${iconSizes[size]} transition-colors ${
             isSaved ? "fill-current" : ""
           } ${loading ? "opacity-50" : ""}`}
           aria-hidden="true"
@@ -157,7 +159,9 @@ export function SaveButton({
       type="button"
       onClick={toggleSave}
       disabled={loading}
-      className={`flex items-center gap-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-3 py-2 text-sm ${
+      className={`flex items-center gap-2 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md ${
+        sizeClasses[size]
+      } ${
         isSaved
           ? "text-blue-700 bg-blue-50 hover:bg-blue-100"
           : "text-gray-600 bg-gray-50 hover:text-blue-600 hover:bg-blue-50"
@@ -165,7 +169,7 @@ export function SaveButton({
       aria-label={`${isSaved ? "Unsave" : "Save"} ${recipe.title}`}
     >
       <FiBookmark
-        className={`w-4 h-4 transition-colors ${
+        className={`${iconSizes[size]} transition-colors ${
           isSaved ? "fill-current" : ""
         } ${loading ? "opacity-50" : ""}`}
         aria-hidden="true"

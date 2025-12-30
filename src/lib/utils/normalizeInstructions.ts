@@ -1,26 +1,54 @@
-// utils/normalizeInstructions.ts
-export function normalizeInstructions(instructions: any): string[] {
+import { RecipeInstruction, RecipeStep } from "@/types/recipe";
+
+// Define types for different instruction formats
+interface StepObject {
+  step?: string;
+  instruction?: string;
+}
+
+export function normalizeInstructions(
+  instructions:
+    | RecipeInstruction[]
+    | StepObject[]
+    | string[]
+    | string
+    | unknown
+    | null
+    | undefined
+): string[] {
   if (!instructions) return [];
 
   // Spoonacular analyzedInstructions
   if (Array.isArray(instructions)) {
-    // case: [{ steps: [...] }]
-    if (instructions[0]?.steps) {
-      return instructions[0].steps.map(
-        (s: any, i: number) => s.step || `Step ${i + 1}`
+    // case: [{ steps: [...] }] - RecipeInstruction[]
+    if (
+      instructions.length > 0 &&
+      typeof instructions[0] === "object" &&
+      instructions[0] !== null &&
+      "steps" in instructions[0] &&
+      Array.isArray(instructions[0].steps)
+    ) {
+      const firstInstruction = instructions[0] as RecipeInstruction;
+      return firstInstruction.steps.map(
+        (s: RecipeStep, i: number) => s.step || `Step ${i + 1}`
       );
     }
 
-    // case: [{ step: "text" }]
-    if (typeof instructions[0] === "object") {
+    // case: [{ step: "text" }] - StepObject[]
+    if (
+      instructions.length > 0 &&
+      typeof instructions[0] === "object" &&
+      instructions[0] !== null &&
+      !("steps" in instructions[0])
+    ) {
       return instructions.map(
-        (s: any, i: number) => s.step || s.instruction || `Step ${i + 1}`
+        (s: StepObject, i: number) => s.step || s.instruction || `Step ${i + 1}`
       );
     }
 
-    // case: ["text", "text"]
-    if (typeof instructions[0] === "string") {
-      return instructions;
+    // case: ["text", "text"] - string[]
+    if (instructions.length > 0 && typeof instructions[0] === "string") {
+      return instructions as string[];
     }
   }
 

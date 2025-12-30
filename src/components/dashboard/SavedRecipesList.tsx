@@ -1,7 +1,7 @@
 "use client";
 
 import { ContentCard } from "@/components/content-card";
-import { transformSavedPost } from "@/lib/utils/transformSavedPost";
+import { transformSavedPost } from "@/types/utils";
 import type { SavedPostData } from "@/types/utils";
 import { FiTag } from "react-icons/fi";
 

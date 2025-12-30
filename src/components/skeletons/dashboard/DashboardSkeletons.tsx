@@ -1,4 +1,4 @@
-import { BaseSkeleton, TextSkeleton, CardSkeleton } from "../index";
+import { BaseSkeleton, CardSkeleton } from "../index";
 
 export function DashboardHeaderSkeleton() {
   return (

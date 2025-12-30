@@ -1,7 +1,6 @@
 import type { PostData } from "@/types/utils";
 import { prisma } from "@/lib/prisma";
 import { getRecipeById } from "@/lib/spoonacular";
-import type { Post } from "@prisma/client";
 
 export function isInternalPostId(postId: string): boolean {
   return postId.length === 24 && /^[0-9a-fA-F]+$/.test(postId);

@@ -165,11 +165,12 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
     }
 
     load();
-  }, [recipeId]); // Removed savedPosts dependency to prevent unnecessary re-fetches
+  }, [recipeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Note: Removed savedPosts dependency to prevent unnecessary re-fetches
 
   // Update recipe with saved posts metadata without triggering re-fetch
   useEffect(() => {
-    if (!recipe || !savedPosts || !recipeId) return; // eslint-disable-line react-hooks/exhaustive-deps
+    if (!recipe || !savedPosts || !recipeId) return;
 
     const snapshot = savedPosts.find((p) => p.postId === recipeId)?.post;
     if (snapshot) {
@@ -196,7 +197,7 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
         return enhancedRecipe;
       });
     }
-  }, [savedPosts, recipeId]);
+  }, [savedPosts, recipeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Public method to set saving state (can be called from SaveButton)
   const setSavingState = (saving: boolean) => {

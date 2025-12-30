@@ -8,17 +8,11 @@ import { RecipeMetadata } from "./ui/RecipeMetadata";
 import { Tags } from "./ui/Tags";
 import { CardSkeleton } from "@/components/skeletons";
 import { useSavedPostsContext } from "./SavedPostsProvider";
-import type { SavedPost } from "@/types/context";
-import type { Post, ContentCardProps } from "@/types/components";
+import type { ContentCardProps } from "@/types/components";
 
 export function ContentCard({ post }: ContentCardProps) {
-  const { savedPosts, isLoading } = useSavedPostsContext();
+  const { isLoading } = useSavedPostsContext();
   const router = useRouter();
-
-  // Check if current post is saved by user
-  const isSaved =
-    Array.isArray(savedPosts) &&
-    savedPosts.some((item: SavedPost) => item.postId === post.id);
 
   // Show skeleton while loading saved posts
   if (isLoading) {

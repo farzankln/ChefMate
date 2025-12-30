@@ -1,7 +1,6 @@
 // Utility Types and Helper Functions
 
 import { Post } from "./components";
-import { SavedPostQueryResult } from "./database";
 
 // Transformation Types
 export interface SavedPostData {
@@ -227,7 +226,6 @@ export type Prettify<T> = {
 
 // Re-export commonly used types
 export type { Post } from "./components";
-export type { SavedPostQueryResult } from "./database";
 
 // Type guards
 export function isPostData(value: unknown): value is Post {

@@ -1,7 +1,6 @@
 "use client";
 
 import type {
-  SavedPost,
   SavedPostsContextType,
   SavedPostsProviderProps,
 } from "@/types/context";
