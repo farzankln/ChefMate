@@ -27,7 +27,6 @@ export async function GET() {
       description: savedPost.description,
       thumbnail: savedPost.thumbnail,
       imageUrl: savedPost.imageUrl,
-      author: savedPost.author,
       category: savedPost.category,
       prepTime: savedPost.prepTime,
       cookTime: savedPost.cookTime,
@@ -44,7 +43,6 @@ export async function GET() {
         description: savedPost.description,
         thumbnail: savedPost.thumbnail,
         imageUrl: savedPost.imageUrl,
-        author: savedPost.author,
         category: savedPost.category,
         prepTime: savedPost.prepTime,
         cookTime: savedPost.cookTime,
@@ -59,7 +57,7 @@ export async function GET() {
     console.error("GET saved-posts error:", error);
     return NextResponse.json(
       { error: "Failed to load saved posts" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -93,7 +91,7 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         { error: "Post already saved" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 

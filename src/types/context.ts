@@ -15,7 +15,6 @@ export interface SavedPost {
     description?: string;
     thumbnail?: string;
     imageUrl?: string;
-    author?: string;
     category?: string;
     prepTime?: string;
     cookTime?: string;
@@ -38,7 +37,7 @@ export interface SavedPostsContextType {
   isError: Error | null;
   mutate: (
     data?: SavedPost[] | ((current: SavedPost[]) => SavedPost[]),
-    options?: { revalidate?: boolean }
+    options?: { revalidate?: boolean },
   ) => Promise<SavedPost[] | undefined>;
 }
 
@@ -64,7 +63,7 @@ export interface AuthContextType {
   status: "loading" | "authenticated" | "unauthenticated";
   signIn: (
     provider: string,
-    credentials?: Record<string, unknown>
+    credentials?: Record<string, unknown>,
   ) => Promise<void>;
   signOut: () => Promise<void>;
 }
@@ -109,7 +108,7 @@ export interface ModalContextType {
 export interface NotificationContextType {
   notifications: Notification[];
   addNotification: (
-    notification: Omit<Notification, "id" | "timestamp">
+    notification: Omit<Notification, "id" | "timestamp">,
   ) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;

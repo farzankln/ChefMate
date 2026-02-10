@@ -46,7 +46,6 @@ export interface SpoonacularRecipe {
   instructions: unknown[];
   analyzedInstructions: RecipeInstruction[];
   nutrition: RecipeNutrition;
-  author: string;
   difficulty: string;
   tags: string[];
   extendedIngredients: RecipeIngredient[];
@@ -58,7 +57,6 @@ export interface Recipe {
   description: string;
   thumbnail: string;
   imageUrl: string;
-  author: string;
   category: string;
   prepTime: string;
   cookTime: string;

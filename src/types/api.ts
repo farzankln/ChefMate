@@ -36,7 +36,6 @@ export interface SpoonacularRecipe {
     property: string;
     value: string;
   };
-  author: string;
   difficulty: string;
   tags: string[];
 }

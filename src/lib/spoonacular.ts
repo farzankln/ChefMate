@@ -26,7 +26,7 @@ export async function complexSearch(params: ComplexSearchParams) {
     `${BASE_URL}/recipes/complexSearch?${query.toString()}`,
     {
       next: { revalidate: 3600 }, // ISR
-    }
+    },
   );
 
   if (!res.ok) {
@@ -47,7 +47,7 @@ export async function getRecipeInformationBulk(params: RecipeInfoParams) {
     `${BASE_URL}/recipes/informationBulk?${query.toString()}`,
     {
       next: { revalidate: 3600 }, // ISR
-    }
+    },
   );
 
   if (!res.ok) {
@@ -65,7 +65,6 @@ export function mapSpoonacularToPost(recipe: SpoonacularRecipe) {
     description: recipe.summary.replace(/<[^>]*>/g, ""), // Strip HTML tags
     thumbnail: recipe.image,
     imageUrl: recipe.image,
-    author: recipe.author || "Chef Spoonacular",
     category: recipe.cuisines.length > 0 ? recipe.cuisines[0] : "International",
     prepTime:
       recipe.readyInMinutes > 0
@@ -81,8 +80,8 @@ export function mapSpoonacularToPost(recipe: SpoonacularRecipe) {
       (recipe.healthScore > 70
         ? "Easy"
         : recipe.healthScore > 40
-        ? "Medium"
-        : "Hard"),
+          ? "Medium"
+          : "Hard"),
     tags: recipe.diets.concat(recipe.cuisines.slice(0, 2)),
     createdAt: new Date(),
   };
@@ -131,7 +130,7 @@ export async function getSimilarRecipes(recipeId: number, number: number = 4) {
       `${BASE_URL}/recipes/${recipeId}/similar?${query.toString()}`,
       {
         next: { revalidate: 3600 }, // ISR
-      }
+      },
     );
 
     if (!res.ok) {
@@ -165,7 +164,6 @@ function getMockRecipes() {
         "A traditional Italian pasta dish made with eggs, cheese, pancetta, and black pepper.",
       thumbnail: "https://spoonacular.com/recipeImages/6548-312x231.jpg",
       imageUrl: "https://spoonacular.com/recipeImages/6548-556x370.jpg",
-      author: "Chef Mario",
       category: "Italian",
       prepTime: "10 min",
       cookTime: "15 min",
@@ -181,12 +179,11 @@ function getMockRecipes() {
         "Tender chicken pieces in a rich, creamy tomato-based curry sauce.",
       thumbnail: "https://spoonacular.com/recipeImages/7154-312x231.jpg",
       imageUrl: "https://spoonacular.com/recipeImages/7154-556x370.jpg",
-      author: "Chef Priya",
       category: "Indian",
       prepTime: "20 min",
       cookTime: "30 min",
       servings: "6",
-      difficulty: "Medium",
+      difficulty: "Easy",
       tags: ["chicken", "curry", "indian", "spicy"],
       createdAt: new Date(),
     },
@@ -197,12 +194,11 @@ function getMockRecipes() {
         "Soft corn tortillas filled with seasoned ground beef, fresh vegetables, and cheese.",
       thumbnail: "https://spoonacular.com/recipeImages/6445-312x231.jpg",
       imageUrl: "https://spoonacular.com/recipeImages/6445-556x370.jpg",
-      author: "Chef Carlos",
       category: "Mexican",
       prepTime: "15 min",
       cookTime: "20 min",
       servings: "4",
-      difficulty: "Easy",
+      difficulty: "Hard",
       tags: ["beef", "mexican", "tacos", "family-friendly"],
       createdAt: new Date(),
     },
@@ -213,7 +209,6 @@ function getMockRecipes() {
         "Fresh cucumber, tomato, red onion, olives, and feta cheese with olive oil dressing.",
       thumbnail: "https://spoonacular.com/recipeImages/7825-312x231.jpg",
       imageUrl: "https://spoonacular.com/recipeImages/7825-556x370.jpg",
-      author: "Chef Demetri",
       category: "Greek",
       prepTime: "10 min",
       cookTime: "0 min",
@@ -341,7 +336,7 @@ export async function getRecipeById(recipeId: string) {
       `${BASE_URL}/recipes/${recipeId}/information?${query.toString()}`,
       {
         next: { revalidate: 3600 }, // ISR
-      }
+      },
     );
 
     if (!res.ok) {

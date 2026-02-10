@@ -21,7 +21,6 @@ export const metadata: Metadata = {
   description:
     "Organize your recipes, plan meals, and enhance your cooking experience with Chef Mate.",
   keywords: ["cooking", "recipes", "meal planning", "chef", "food"],
-  authors: [{ name: "Chef Mate Team" }],
   creator: "Chef Mate",
   publisher: "Chef Mate",
   openGraph: {

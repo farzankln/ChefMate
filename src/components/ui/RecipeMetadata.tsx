@@ -1,13 +1,11 @@
 import { TimeDisplay } from "./TimeDisplay";
-import { Badge } from "./Badge";
-import { FiUsers, FiUser } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 
 interface RecipeMetadataProps {
   prepTime?: string;
   cookTime?: string;
   servings?: string;
   difficulty?: string;
-  author?: string;
   createdAt?: Date;
   className?: string;
   showIcons?: boolean;
@@ -17,15 +15,10 @@ export function RecipeMetadata({
   prepTime,
   cookTime,
   servings,
-  difficulty,
-  author,
-  createdAt,
   className = "",
   showIcons = true,
 }: RecipeMetadataProps) {
   const servingsIcon = <FiUsers className="w-3 h-3" />;
-
-  const authorIcon = <FiUser className="w-3 h-3" />;
 
   return (
     <div
@@ -51,18 +44,6 @@ export function RecipeMetadata({
           {servings} servings
         </span>
       )}
-      {difficulty && (
-        <Badge variant="difficulty" size="sm">
-          {difficulty}
-        </Badge>
-      )}
-      {author && (
-        <span className="flex items-center gap-1">
-          {showIcons && authorIcon}
-          {author}
-        </span>
-      )}
-      {createdAt && <span>{new Date(createdAt).toLocaleDateString()}</span>}
     </div>
   );
 }

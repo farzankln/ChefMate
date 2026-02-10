@@ -61,7 +61,7 @@ export default function RecipeNutrition({ recipe }: RecipeNutritionProps) {
           >
             <div className="flex justify-between items-center mb-2">
               <span className="font-medium text-gray-900">{n.name}</span>
-              <span className="font-bold text-blue-600">
+              <span className="font-bold text-red-600">
                 {Math.round(n.amount)} {n.unit}
               </span>
             </div>
@@ -70,12 +70,12 @@ export default function RecipeNutrition({ recipe }: RecipeNutritionProps) {
               <div className="space-y-1">
                 <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden relative">
                   <div
-                    className="nutrition-bar bg-liner-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                    className="nutrition-bar bg-gradient-to-r from-red-500 to-red-600 h-2 rounded-full transition-all duration-500 ease-out"
                     style={{
                       width: `${Math.min(n.percentOfDailyNeeds, 100)}%`,
                     }}
                   />
-                  <div className="absolute inset-0 bg-liner-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
                 </div>
                 <p className="text-xs text-gray-500">
                   {Math.round(n.percentOfDailyNeeds)}% of daily needs
@@ -86,8 +86,8 @@ export default function RecipeNutrition({ recipe }: RecipeNutritionProps) {
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-sm text-red-800">
           <strong>Note:</strong> Nutrition values are approximate and may vary
           based on ingredients and preparation methods.
         </p>

@@ -58,7 +58,7 @@ export default function Navigation() {
             <div className="ml-10 flex items-baseline space-x-4">
               <Link
                 href="/"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                 aria-label="Home"
               >
                 Home
@@ -68,14 +68,14 @@ export default function Navigation() {
                 <>
                   <Link
                     href="/dashboard"
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Dashboard"
                   >
                     Dashboard
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Sign out"
                   >
                     Sign Out
@@ -85,14 +85,14 @@ export default function Navigation() {
                 <>
                   <Link
                     href="/login"
-                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                    className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Sign in"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/register"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                    className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                     aria-label="Create account"
                   >
                     Create Account
@@ -112,10 +112,10 @@ export default function Navigation() {
                     alt={user.name || user.email || "User"}
                     width={32}
                     height={32}
-                    className="rounded-full object-cover border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+                    className="rounded-full object-cover border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
                   />
                 ) : (
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                     {(user.name || user.email || "U").charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -131,7 +131,7 @@ export default function Navigation() {
             <button
               type="button"
               onClick={toggleMenu}
-              className="text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white inline-flex items-center justify-center p-2 rounded-md"
+              className="text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white inline-flex items-center justify-center p-2 rounded-md"
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
             >
@@ -153,7 +153,7 @@ export default function Navigation() {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-50 border-t border-gray-200">
           <Link
             href="/"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+            className="text-gray-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
             aria-label="Home"
             onClick={() => setIsMenuOpen(false)}
           >
@@ -164,7 +164,7 @@ export default function Navigation() {
             <>
               <Link
                 href="/dashboard"
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                className="text-gray-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 aria-label="Dashboard"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -194,7 +194,7 @@ export default function Navigation() {
                         className="rounded-full object-cover"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                      <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-medium">
                         {(user.name || user.email || "U")
                           .charAt(0)
                           .toUpperCase()}
@@ -214,7 +214,7 @@ export default function Navigation() {
             <>
               <Link
                 href="/login"
-                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                className="text-gray-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 aria-label="Sign in"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -222,7 +222,7 @@ export default function Navigation() {
               </Link>
               <Link
                 href="/register"
-                className="bg-blue-600 text-white hover:bg-blue-700 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                className="bg-red-600 text-white hover:bg-red-700 block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 aria-label="Create account"
                 onClick={() => setIsMenuOpen(false)}
               >

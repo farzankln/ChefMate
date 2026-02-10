@@ -26,7 +26,6 @@ export interface PostQueryResult {
   description: string;
   thumbnail?: string;
   imageUrl?: string;
-  author?: string;
   category?: string;
   prepTime?: string;
   cookTime?: string;
@@ -48,7 +47,6 @@ export interface SavedPostQueryResult {
   description: string | null;
   thumbnail: string | null;
   imageUrl: string | null;
-  author: string | null;
   category: string | null;
   prepTime: string | null;
   cookTime: string | null;
@@ -67,7 +65,6 @@ export interface CreatePostData {
   description: string;
   thumbnail?: string;
   imageUrl?: string;
-  author?: string;
   category?: string;
   prepTime?: string;
   cookTime?: string;
@@ -87,7 +84,6 @@ export interface CreateSavedPostData {
   description?: string;
   thumbnail?: string;
   imageUrl?: string;
-  author?: string;
   category?: string;
   prepTime?: string;
   cookTime?: string;
@@ -105,7 +101,6 @@ export interface PostFilters {
   category?: string;
   difficulty?: string;
   tags?: string[];
-  author?: string;
   createdAfter?: Date;
   createdBefore?: Date;
 }

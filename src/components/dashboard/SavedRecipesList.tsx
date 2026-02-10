@@ -38,7 +38,7 @@ export default function SavedRecipesList({
           return (
             <div
               key={savedPost.id}
-              className="transform transition-all duration-200 hover:scale-105"
+              className="transform transition-all duration-200"
             >
               <ContentCard post={post} />
             </div>

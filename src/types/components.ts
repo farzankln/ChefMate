@@ -10,7 +10,6 @@ export interface Post {
   description?: string;
   thumbnail?: string;
   imageUrl?: string;
-  author?: string;
   category?: string;
   prepTime?: string;
   cookTime?: string;
@@ -78,7 +77,6 @@ export interface RecipeMetadataProps {
   cookTime?: string;
   servings?: string;
   difficulty?: string;
-  author?: string;
   createdAt?: Date;
   className?: string;
 }
@@ -218,6 +216,6 @@ export interface UseSavedPostsReturn<T = unknown> {
   isError: Error | null;
   mutate: (
     data?: T[] | ((current: T[]) => T[]),
-    options?: { revalidate?: boolean }
+    options?: { revalidate?: boolean },
   ) => Promise<T[] | undefined>;
 }

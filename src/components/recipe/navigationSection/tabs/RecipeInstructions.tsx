@@ -41,11 +41,11 @@ export default function RecipeInstructions({
       </div>
       <ol className="space-y-6">
         {instructions.map((step: RecipeStep) => (
-          <li key={step.number} className="flex gap-4">
-            <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold text-sm shrink-0">
+          <li key={step.number} className="flex">
+            <span className="w-8 h-8 bg-red-600 text-white rounded-l-full flex items-center justify-center font-semibold text-sm shrink-0">
               {step.number}
             </span>
-            <div className="flex-1 bg-gray-50 rounded-lg p-4">
+            <div className="flex-1 bg-gray-100 rounded-lg rounded-tl-none p-4">
               <p className="text-gray-700 leading-relaxed">{step.step}</p>
 
               {step.ingredients && step.ingredients.length > 0 && (

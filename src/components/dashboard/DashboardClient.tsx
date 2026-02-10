@@ -49,7 +49,6 @@ export function DashboardClient({
               description: savedPost.post?.description || null,
               thumbnail: savedPost.post?.thumbnail || null,
               imageUrl: savedPost.post?.imageUrl || null,
-              author: savedPost.post?.author || null,
               category: savedPost.post?.category || null,
               prepTime: savedPost.post?.prepTime || null,
               cookTime: savedPost.post?.cookTime || null,

@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from "react";
 import Image from "next/image";
-import { FiCamera } from "react-icons/fi";
+import { AiOutlinePicture } from "react-icons/ai";
 
 interface ImageWithFallbackProps {
   src?: string;
@@ -34,9 +34,11 @@ export function ImageWithFallback({
   if (!src || imageError) {
     return (
       <div
-        className={`flex items-center justify-center bg-liner-to-br from-orange-400 to-orange-600 ${className}`}
+        className={`h-full flex items-center justify-center bg-gradient-to-br from-red-600 via-orange-600 to-red-600 ${className}`}
       >
-        {fallback || <FiCamera className="w-16 h-16 text-white opacity-80" />}
+        {fallback || (
+          <AiOutlinePicture className="w-16 h-16 text-white opacity-80" />
+        )}
       </div>
     );
   }

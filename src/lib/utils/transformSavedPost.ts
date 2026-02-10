@@ -7,7 +7,6 @@ export function transformSavedPost(savedPost: SavedPostData) {
     description: savedPost.description || "No description available",
     thumbnail: savedPost.thumbnail || undefined,
     imageUrl: savedPost.imageUrl || undefined,
-    author: savedPost.author || "Unknown Author",
     category: savedPost.category || "Miscellaneous",
     prepTime: savedPost.prepTime || undefined,
     cookTime: savedPost.cookTime || undefined,

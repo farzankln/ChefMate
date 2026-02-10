@@ -7,7 +7,7 @@ export function isInternalPostId(postId: string): boolean {
 }
 
 export async function getPostDataById(
-  postId: string
+  postId: string,
 ): Promise<{ post: PostData; source: "internal" | "spoonacular" }> {
   if (isInternalPostId(postId)) {
     const post = await prisma.post.findUnique({ where: { id: postId } });
@@ -18,7 +18,6 @@ export async function getPostDataById(
       ...post,
       thumbnail: post.thumbnail || undefined,
       imageUrl: post.imageUrl || undefined,
-      author: post.author || undefined,
       category: post.category || undefined,
       prepTime: post.prepTime || undefined,
       cookTime: post.cookTime || undefined,
@@ -41,7 +40,7 @@ export function mapPostToSavedPostData(
   postId: string,
   userId: string,
   postData: PostData,
-  source: "internal" | "spoonacular"
+  source: "internal" | "spoonacular",
 ) {
   return {
     userId,
@@ -50,7 +49,6 @@ export function mapPostToSavedPostData(
     description: postData.description || null,
     thumbnail: postData.thumbnail || null,
     imageUrl: postData.imageUrl || null,
-    author: postData.author || null,
     category: postData.category || null,
     prepTime: postData.prepTime || null,
     cookTime: postData.cookTime || null,

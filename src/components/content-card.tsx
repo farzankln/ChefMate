@@ -40,18 +40,41 @@ export function ContentCard({ post }: ContentCardProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
 
-        {/* Overlay with category and difficulty */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+        {/* Badges - Category on left, Difficulty on right */}
+        <div className="absolute top-2 left-2">
           {post.category && (
             <Badge variant="category" size="sm">
               {post.category}
             </Badge>
           )}
+        </div>
+        <div className="absolute top-2 right-2">
           {post.difficulty && (
             <Badge variant="difficulty" size="sm">
               {post.difficulty}
             </Badge>
           )}
+        </div>
+
+        {/* Save Button - Bottom Right with responsive styling */}
+        {/* Desktop: button with text, Mobile: icon only */}
+        <div className="absolute bottom-2 right-2 z-10">
+          <SaveButton
+            recipe={post}
+            variant="icon"
+            size="sm"
+            showText={false}
+            className="lg:hidden bg-white/90 backdrop-blur-sm shadow-md hover:shadow-lg rounded-full p-2"
+          />
+          <div className="hidden lg:block">
+            <SaveButton
+              recipe={post}
+              variant="button"
+              size="sm"
+              showText={true}
+              className="bg-white shadow-md hover:shadow-lg"
+            />
+          </div>
         </div>
       </div>
 
@@ -60,7 +83,7 @@ export function ContentCard({ post }: ContentCardProps) {
         {/* Title */}
         <h3
           id={`post-title-${post.id}`}
-          className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors"
+          className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-red-600 transition-colors"
         >
           {post.title || "Untitled Recipe"}
         </h3>
@@ -78,7 +101,6 @@ export function ContentCard({ post }: ContentCardProps) {
           cookTime={post.cookTime}
           servings={post.servings}
           difficulty={post.difficulty}
-          author={post.author}
           createdAt={post.createdAt}
           className="mb-3"
         />
@@ -86,16 +108,7 @@ export function ContentCard({ post }: ContentCardProps) {
         {/* Tags */}
         <Tags tags={post.tags || []} className="mb-3" />
 
-        {/* Actions */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-          {/* Save Button */}
-          <SaveButton
-            recipe={post}
-            variant="button"
-            size="sm"
-            showText={false}
-          />
-        </div>
+        {/* Actions - Removed, save button is now on image */}
       </div>
     </article>
   );

@@ -12,7 +12,6 @@ export interface SavedPostData {
   description: string | null;
   thumbnail: string | null;
   imageUrl: string | null;
-  author: string | null;
   category: string | null;
   prepTime: string | null;
   cookTime: string | null;
@@ -188,7 +187,6 @@ export function transformSavedPost(savedPost: SavedPostData): Post {
     description: savedPost.description || "No description available",
     thumbnail: savedPost.thumbnail || undefined,
     imageUrl: savedPost.imageUrl || undefined,
-    author: savedPost.author || "Unknown Author",
     category: savedPost.category || "Miscellaneous",
     prepTime: savedPost.prepTime || undefined,
     cookTime: savedPost.cookTime || undefined,
@@ -249,7 +247,7 @@ export function isSavedPostData(value: unknown): value is SavedPostData {
 // Validation helpers
 export function validateRequired<T>(
   value: T,
-  fieldName: string
+  fieldName: string,
 ): ValidationResult {
   if (value === null || value === undefined || value === "") {
     return {

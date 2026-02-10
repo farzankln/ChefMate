@@ -51,7 +51,6 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
             description: snapshot.description || "No description available",
             thumbnail: snapshot.thumbnail || "/placeholder-recipe.jpg",
             imageUrl: snapshot.imageUrl || "/placeholder-recipe.jpg",
-            author: snapshot.author || "Unknown Author",
             category: snapshot.category || "General",
             prepTime: snapshot.prepTime || "0 min",
             cookTime: snapshot.cookTime || "0 min",
@@ -85,7 +84,7 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
                       ? [
                           {
                             steps: normalizeInstructions(
-                              savedPost.instructions
+                              savedPost.instructions,
                             ).map((stepText: string, index: number) => ({
                               number: index + 1,
                               step: stepText,
@@ -102,7 +101,6 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
                         savedPost?.nutrition ||
                         [],
                     },
-                    author: snapshot.author || "Unknown Author",
                     difficulty: snapshot.difficulty || "Medium",
                     tags: snapshot.tags || [],
                     extendedIngredients: savedPost?.ingredients || [],
@@ -125,7 +123,6 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
               description: snapshot.description || recipeData!.description,
               thumbnail: snapshot.thumbnail || recipeData!.thumbnail,
               imageUrl: snapshot.imageUrl || recipeData!.imageUrl,
-              author: snapshot.author || recipeData!.author,
               category: snapshot.category || recipeData!.category,
               prepTime: snapshot.prepTime || recipeData!.prepTime,
               cookTime: snapshot.cookTime || recipeData!.cookTime,
@@ -183,7 +180,6 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
           description: snapshot.description || prevRecipe.description,
           thumbnail: snapshot.thumbnail || prevRecipe.thumbnail,
           imageUrl: snapshot.imageUrl || prevRecipe.imageUrl,
-          author: snapshot.author || prevRecipe.author,
           category: snapshot.category || prevRecipe.category,
           prepTime: snapshot.prepTime || prevRecipe.prepTime,
           cookTime: snapshot.cookTime || prevRecipe.cookTime,
