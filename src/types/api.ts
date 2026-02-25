@@ -1,5 +1,24 @@
 // API and External Service Types
 
+// Recipe instruction types (used by SpoonacularRecipe)
+export interface RecipeStep {
+  number: number;
+  step: string;
+  ingredients?: Array<{ name: string }>;
+  equipment?: Array<{ name: string }>;
+}
+
+export interface RecipeInstruction {
+  name: string;
+  steps: RecipeStep[];
+}
+
+export interface RecipeIngredient {
+  amount: number;
+  unit: string;
+  name: string;
+}
+
 // Spoonacular API Types
 export interface SpoonacularRecipe {
   id: number;
@@ -17,13 +36,17 @@ export interface SpoonacularRecipe {
   dishTypes: string[];
   diets: string[];
   occasions: string[];
-  winePairing: {
+  winePairing?: {
     pairedWines: string[];
     pairingText: string;
     productMatches: unknown[];
   };
+  tips?: {
+    property: string;
+    value: string;
+  };
   instructions: unknown[];
-  analyzedInstructions: unknown[];
+  analyzedInstructions: RecipeInstruction[];
   nutrition: {
     nutrients: Array<{
       name: string;
@@ -32,12 +55,9 @@ export interface SpoonacularRecipe {
       percentOfDailyNeeds: number;
     }>;
   };
-  tips: {
-    property: string;
-    value: string;
-  };
   difficulty: string;
   tags: string[];
+  extendedIngredients: RecipeIngredient[];
 }
 
 export interface SpoonacularSearchResult {
@@ -48,9 +68,15 @@ export interface SpoonacularSearchResult {
 }
 
 export interface ComplexSearchParams {
+  query?: string;
   type?: string;
+  cuisine?: string;
+  diet?: string;
+  intolerances?: string;
   number?: number;
   offset?: number;
+  addRecipeInformation?: boolean;
+  fillIngredients?: boolean;
 }
 
 export interface RecipeInfoParams {

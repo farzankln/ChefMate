@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { Post } from "./components";
+import type { Prisma } from "@prisma/client";
 
 // Saved Posts Context Types
 export interface SavedPost {
@@ -26,9 +27,9 @@ export interface SavedPost {
     updatedAt?: Date;
   } | null; // Post might be null for external recipes
   // Enhanced recipe data fields
-  ingredients?: unknown;
-  instructions?: unknown;
-  nutrition?: unknown;
+  ingredients?: Prisma.InputJsonValue | null;
+  instructions?: Prisma.InputJsonValue | null;
+  nutrition?: Prisma.InputJsonValue | null;
 }
 
 export interface SavedPostsContextType {

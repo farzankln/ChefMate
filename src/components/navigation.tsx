@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { LuChefHat } from "react-icons/lu";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiSearch } from "react-icons/fi";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,6 +62,14 @@ export default function Navigation() {
                 aria-label="Home"
               >
                 Home
+              </Link>
+
+              <Link
+                href="/search"
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white"
+                aria-label="Search"
+              >
+                Search
               </Link>
 
               {isAuthenticated ? (
@@ -158,6 +166,16 @@ export default function Navigation() {
             onClick={() => setIsMenuOpen(false)}
           >
             Home
+          </Link>
+
+          <Link
+            href="/search"
+            className="text-gray-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors"
+            aria-label="Search"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <FiSearch className="inline-block mr-2" />
+            Search
           </Link>
 
           {isAuthenticated ? (

@@ -8,18 +8,34 @@ import type {
 
 const BASE_URL = "https://api.spoonacular.com";
 
-const apiKey = (process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY ||
-  process.env.SPOONACULAR_API_KEY) as string;
+// Lazy getter for API key - only server-side for security
+function getApiKey(): string {
+  const apiKey = process.env.SPOONACULAR_API_KEY;
 
-if (!apiKey) {
-  throw new Error("Spoonacular API key is missing");
+  if (!apiKey) {
+    throw new Error(
+      "Spoonacular API key is missing. Please set SPOONACULAR_API_KEY environment variable.",
+    );
+  }
+
+  return apiKey;
 }
 
 export async function complexSearch(params: ComplexSearchParams) {
   const query = new URLSearchParams();
-  query.append("apiKey", apiKey);
+  query.append("apiKey", getApiKey());
   query.append("number", String(params.number ?? 10));
+  query.append(
+    "addRecipeInformation",
+    String(params.addRecipeInformation ?? true),
+  );
+  query.append("fillIngredients", String(params.fillIngredients ?? true));
+
+  if (params.query) query.append("query", params.query);
   if (params.type) query.append("type", params.type);
+  if (params.cuisine) query.append("cuisine", params.cuisine);
+  if (params.diet) query.append("diet", params.diet);
+  if (params.intolerances) query.append("intolerances", params.intolerances);
   if (params.offset) query.append("offset", String(params.offset));
 
   const res = await fetch(
@@ -38,7 +54,7 @@ export async function complexSearch(params: ComplexSearchParams) {
 
 export async function getRecipeInformationBulk(params: RecipeInfoParams) {
   const query = new URLSearchParams();
-  query.append("apiKey", apiKey);
+  query.append("apiKey", getApiKey());
   query.append("ids", params.ids);
   if (params.includeNutrition)
     query.append("includeNutrition", String(params.includeNutrition));
@@ -119,11 +135,57 @@ export async function getFeaturedRecipes() {
   }
 }
 
+// Search recipes with query and filters
+export async function searchRecipes(params: {
+  query: string;
+  type?: string;
+  cuisine?: string;
+  diet?: string;
+  intolerances?: string;
+  number?: number;
+  offset?: number;
+}) {
+  try {
+    const searchResult = await complexSearch({
+      query: params.query,
+      type: params.type,
+      cuisine: params.cuisine,
+      diet: params.diet,
+      intolerances: params.intolerances,
+      number: params.number ?? 12,
+      offset: params.offset ?? 0,
+      addRecipeInformation: true,
+      fillIngredients: true,
+    });
+
+    if (!searchResult.results || searchResult.results.length === 0) {
+      return {
+        recipes: [],
+        totalResults: 0,
+      };
+    }
+
+    // Map to our Post interface
+    const mappedRecipes = searchResult.results.map(mapSpoonacularToPost);
+
+    return {
+      recipes: mappedRecipes,
+      totalResults: searchResult.totalResults,
+    };
+  } catch (error) {
+    console.error("Error searching recipes:", error);
+    return {
+      recipes: [],
+      totalResults: 0,
+    };
+  }
+}
+
 // Get similar recipes
 export async function getSimilarRecipes(recipeId: number, number: number = 4) {
   try {
     const query = new URLSearchParams();
-    query.append("apiKey", apiKey);
+    query.append("apiKey", getApiKey());
     query.append("number", String(number));
 
     const res = await fetch(
@@ -329,7 +391,7 @@ function getMockSimilarRecipes() {
 export async function getRecipeById(recipeId: string) {
   try {
     const query = new URLSearchParams();
-    query.append("apiKey", apiKey);
+    query.append("apiKey", getApiKey());
     query.append("includeNutrition", "true");
 
     const res = await fetch(
@@ -364,7 +426,7 @@ export async function getRecipeById(recipeId: string) {
 export async function getRandomRecipes(number: number = 8) {
   try {
     const query = new URLSearchParams();
-    query.append("apiKey", apiKey);
+    query.append("apiKey", getApiKey());
     query.append("number", String(number));
     query.append("tags", "vegetarian,main course,dessert");
 

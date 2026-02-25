@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -52,7 +53,26 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push("/login");
+        // Store credentials for auto-login before clearing form
+        const credentials = { email: form.email, password: form.password };
+
+        // Clear sensitive data from memory
+        setForm({ name: "", email: "", password: "" });
+
+        // Automatically sign in the user after registration
+        const signInResult = await signIn("credentials", {
+          email: credentials.email,
+          password: credentials.password,
+          redirect: false,
+        });
+
+        if (signInResult?.ok) {
+          // Redirect to dashboard on successful login
+          router.push("/dashboard");
+        } else {
+          // If auto-login fails, redirect to login page
+          router.push("/login");
+        }
       } else {
         setError(data.error || "Registration failed");
       }
@@ -96,7 +116,7 @@ export default function RegisterPage() {
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Enter your full name"
                 disabled={isLoading}
               />
@@ -117,7 +137,7 @@ export default function RegisterPage() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Enter your email"
                 disabled={isLoading}
               />
@@ -138,7 +158,7 @@ export default function RegisterPage() {
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-100 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 placeholder="Create a password (min. 6 characters)"
                 disabled={isLoading}
               />
@@ -147,7 +167,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? "Creating account..." : "Create Account"}
             </button>
@@ -158,7 +178,7 @@ export default function RegisterPage() {
               Already have an account?
               <Link
                 href="/login"
-                className="font-medium text-blue-400 hover:text-blue-300"
+                className="font-medium text-red-400 hover:text-red-300"
               >
                 Sign in
               </Link>

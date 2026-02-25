@@ -5,13 +5,18 @@ import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ postId: string }> }
+  { params }: { params: Promise<{ postId: string }> },
 ) {
   const { postId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Validate postId
+  if (!postId || typeof postId !== "string" || postId.length > 50) {
+    return NextResponse.json({ error: "Invalid postId" }, { status: 400 });
   }
 
   try {
@@ -29,7 +34,7 @@ export async function DELETE(
     console.error("DELETE saved-post error:", error);
     return NextResponse.json(
       { error: "Failed to delete saved post" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

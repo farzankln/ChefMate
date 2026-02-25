@@ -69,9 +69,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { postId } = await req.json();
-  if (!postId)
-    return NextResponse.json({ error: "postId is required" }, { status: 400 });
+  // Parse and validate request body with proper error handling
+  let postId: string;
+  try {
+    const body = await req.json();
+    postId = body.postId;
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON in request body" },
+      { status: 400 },
+    );
+  }
+
+  if (!postId || typeof postId !== "string" || postId.length > 50) {
+    return NextResponse.json({ error: "Invalid postId" }, { status: 400 });
+  }
 
   try {
     const { post: postData, source } = await getPostDataById(postId);

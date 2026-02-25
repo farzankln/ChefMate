@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import type { Recipe } from "./recipe";
+import type { Session } from "next-auth";
 
 // Core Post interface used across components
 export interface Post {
@@ -19,7 +20,6 @@ export interface Post {
   views?: number;
   createdAt?: Date;
   updatedAt?: Date;
-  [key: string]: unknown;
 }
 
 // Basic UI Component Props
@@ -98,7 +98,12 @@ export interface TabsProps {
 
 // Button and Action Components
 export interface SaveButtonProps {
-  recipe: { id: string; title?: string; [key: string]: unknown };
+  recipe: {
+    id: string;
+    title?: string;
+    thumbnail?: string;
+    imageUrl?: string;
+  };
   variant?: "icon" | "button";
   size?: "sm" | "md" | "lg";
   showText?: boolean;
@@ -173,7 +178,7 @@ export interface RecipeNutritionProps {
 // Provider Components
 export interface ProvidersProps {
   children: React.ReactNode;
-  session?: unknown;
+  session?: Session | null;
 }
 
 // Dashboard Components
@@ -202,15 +207,9 @@ export type ComponentVariant =
 export type ComponentState = "default" | "loading" | "error" | "success";
 
 // Hook return types
-export interface UseRecipeDetailReturn {
-  recipe: Recipe | null;
-  similarRecipes: Recipe[];
-  loading: boolean;
-  error: string | null;
-  setSavingState: (saving: boolean) => void;
-}
+// Note: UseRecipeDetailReturn is now imported from recipe.ts
 
-export interface UseSavedPostsReturn<T = unknown> {
+export interface UseSavedPostsReturn<T = Post> {
   savedPosts: T[];
   isLoading: boolean;
   isError: Error | null;

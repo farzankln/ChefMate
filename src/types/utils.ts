@@ -1,6 +1,46 @@
 // Utility Types and Helper Functions
 
 import { Post } from "./components";
+import type { SpoonacularRecipe } from "./api";
+import type { Prisma } from "@prisma/client";
+import type { ApiResponse } from "./api";
+
+// Re-export ApiResponse from api.ts to avoid duplication
+export type { ApiResponse };
+
+// Enhanced Recipe Data Types
+export interface ExtendedIngredients {
+  amount: number;
+  unit: string;
+  name: string;
+  image?: string;
+  original?: string;
+  originalName?: string;
+}
+
+export interface AnalyzedInstruction {
+  name: string;
+  steps: Array<{
+    number: number;
+    step: string;
+    ingredients?: Array<{ name: string }>;
+    equipment?: Array<{ name: string }>;
+  }>;
+}
+
+export interface NutritionNutrients {
+  name: string;
+  amount: number;
+  unit: string;
+  percentOfDailyNeeds: number;
+}
+
+export interface NutritionData {
+  nutrients: NutritionNutrients[];
+}
+
+// Type for the original recipe data stored with posts
+export type OriginalRecipeData = SpoonacularRecipe | Prisma.InputJsonValue;
 
 // Transformation Types
 export interface SavedPostData {
@@ -18,14 +58,14 @@ export interface SavedPostData {
   servings: string | null;
   difficulty: string | null;
   tags: string[];
-  ingredients?: unknown;
-  instructions?: unknown;
-  nutrition?: unknown;
+  ingredients?: Prisma.InputJsonValue | null;
+  instructions?: Prisma.InputJsonValue | null;
+  nutrition?: Prisma.InputJsonValue | null;
 }
 
 // Post Data Types
 export type PostData = Partial<Post> & {
-  originalRecipe?: unknown;
+  originalRecipe?: OriginalRecipeData;
   thumbnail?: string | null;
   imageUrl?: string | null;
 };
@@ -165,46 +205,7 @@ export interface ErrorHandler {
   (error: Error | AppError): void;
 }
 
-// Response Types
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-// Transform Functions
-export function transformSavedPost(savedPost: SavedPostData): Post {
-  return {
-    id: savedPost.postId,
-    title: savedPost.title || "Untitled Recipe",
-    description: savedPost.description || "No description available",
-    thumbnail: savedPost.thumbnail || undefined,
-    imageUrl: savedPost.imageUrl || undefined,
-    category: savedPost.category || "Miscellaneous",
-    prepTime: savedPost.prepTime || undefined,
-    cookTime: savedPost.cookTime || undefined,
-    servings: savedPost.servings || undefined,
-    difficulty: savedPost.difficulty || undefined,
-    tags: savedPost.tags || [],
-    views: 0,
-    createdAt: savedPost.createdAt,
-    updatedAt: savedPost.createdAt,
-    originalRecipe: {
-      extendedIngredients: savedPost.ingredients || [],
-      analyzedInstructions: savedPost.instructions || [],
-      nutrition: savedPost.nutrition || { nutrients: [] },
-    },
-  };
-}
-
-// Utility Types
+// Re-export commonly used types
 export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;

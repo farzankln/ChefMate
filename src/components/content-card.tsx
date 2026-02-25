@@ -6,27 +6,30 @@ import { ImageWithFallback } from "./ui/ImageWithFallback";
 import { Badge } from "./ui/Badge";
 import { RecipeMetadata } from "./ui/RecipeMetadata";
 import { Tags } from "./ui/Tags";
-import { CardSkeleton } from "@/components/skeletons";
-import { useSavedPostsContext } from "./SavedPostsProvider";
 import type { ContentCardProps } from "@/types/components";
 
 export function ContentCard({ post }: ContentCardProps) {
-  const { isLoading } = useSavedPostsContext();
+  // Note: SavedPostsContext is used internally by SaveButton component
+  // No need to destructure savedPosts here
   const router = useRouter();
-
-  // Show skeleton while loading saved posts
-  if (isLoading) {
-    return <CardSkeleton />;
-  }
 
   const handleCardClick = () => {
     router.push(`/recipe/${post.id}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      router.push(`/recipe/${post.id}`);
+    }
   };
 
   return (
     <article
       className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
       onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
       role="article"
       aria-labelledby={`post-title-${post.id}`}
     >
