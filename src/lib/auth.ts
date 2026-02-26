@@ -6,10 +6,6 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const authOptions: AuthOptions = {
-  // CSRF protection is handled automatically by NextAuth
-  // - Uses POST for state-changing operations
-  // - Generates and verifies CSRF tokens for credentials provider
-  // - State parameter is used for OAuth flows
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -47,7 +43,7 @@ export const authOptions: AuthOptions = {
           // Verify password
           const isValidPassword = await bcrypt.compare(
             credentials.password,
-            user.password,
+            user.password
           );
 
           if (!isValidPassword) {
@@ -118,11 +114,7 @@ export const authOptions: AuthOptions = {
             });
           }
         } catch (error) {
-          // Log error with details for debugging
           console.error("OAuth user sync error:", error);
-          // Add error to token so it can be handled in session callback
-          token.oauthError =
-            error instanceof Error ? error.message : "OAuth sync failed";
         }
       }
 

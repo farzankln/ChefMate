@@ -33,7 +33,8 @@ export default function Home() {
   return (
     <div className="min-h-dvh  bg-gray-50">
       {/* Hero Section */}
-      <section className="h-dvh bg-gradient-to-br from-red-600 via-red-800 to-red-950 text-white flex flex-col justify-center pt-16">
+      <section className="h-dvh bg-gradient-to-br from-red-600 via-red-800 to-red-950 text-white flex flex-col justify-center -mt-16 ">
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Discover Amazing Recipes

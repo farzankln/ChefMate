@@ -1,12 +1,20 @@
-// Recipe types re-exported from api.ts as the single source of truth.
-// Spoonacular API types and recipe data structures are centralized in api.ts
-// to maintain consistency across the application.
-export type {
-  SpoonacularRecipe,
-  RecipeIngredient,
-  RecipeStep,
-  RecipeInstruction,
-} from "./api";
+export interface RecipeIngredient {
+  amount: number;
+  unit: string;
+  name: string;
+}
+
+export interface RecipeStep {
+  number: number;
+  step: string;
+  ingredients?: Array<{ name: string }>;
+  equipment?: Array<{ name: string }>;
+}
+
+export interface RecipeInstruction {
+  name: string;
+  steps: RecipeStep[];
+}
 
 export interface RecipeNutrient {
   name: string;
@@ -17,6 +25,30 @@ export interface RecipeNutrient {
 
 export interface RecipeNutrition {
   nutrients: RecipeNutrient[];
+}
+
+export interface SpoonacularRecipe {
+  id: number;
+  title: string;
+  image: string;
+  imageType: string;
+  servings: number;
+  readyInMinutes: number;
+  pricePerServing: number;
+  aggregatedLikes: number;
+  healthScore: number;
+  spoonacularScore: number;
+  summary: string;
+  cuisines: string[];
+  dishTypes: string[];
+  diets: string[];
+  occasions: string[];
+  instructions: unknown[];
+  analyzedInstructions: RecipeInstruction[];
+  nutrition: RecipeNutrition;
+  difficulty: string;
+  tags: string[];
+  extendedIngredients: RecipeIngredient[];
 }
 
 export interface Recipe {
@@ -32,13 +64,15 @@ export interface Recipe {
   difficulty: string;
   tags: string[];
   createdAt: Date;
-  originalRecipe?: import("./api").SpoonacularRecipe;
+  originalRecipe?: SpoonacularRecipe;
+  [key: string]: unknown;
 }
 
 export interface SimilarRecipe {
   id: string;
   title: string;
   imageUrl: string;
+  [key: string]: unknown;
 }
 
 export interface UseRecipeDetailReturn {

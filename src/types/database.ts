@@ -1,7 +1,6 @@
 // Database and Prisma Types
 
 import type { User, Post, SavedPost } from "@prisma/client";
-import type { Prisma } from "@prisma/client";
 
 // Enhanced Post type with relations
 export interface PostWithRelations extends Post {
@@ -55,9 +54,9 @@ export interface SavedPostQueryResult {
   difficulty: string | null;
   tags: string[];
   // Enhanced recipe data fields
-  ingredients?: Prisma.InputJsonValue | null;
-  instructions?: Prisma.InputJsonValue | null;
-  nutrition?: Prisma.InputJsonValue | null;
+  ingredients?: unknown;
+  instructions?: unknown;
+  nutrition?: unknown;
 }
 
 // Database operation types
@@ -92,9 +91,9 @@ export interface CreateSavedPostData {
   difficulty?: string;
   tags?: string[];
   source: "internal" | "spoonacular";
-  ingredients?: Prisma.InputJsonValue | null;
-  instructions?: Prisma.InputJsonValue | null;
-  nutrition?: Prisma.InputJsonValue | null;
+  ingredients?: unknown;
+  instructions?: unknown;
+  nutrition?: unknown;
 }
 
 // Database filter types

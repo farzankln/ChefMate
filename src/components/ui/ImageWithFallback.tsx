@@ -58,21 +58,6 @@ export function ImageWithFallback({
     );
   }
 
-  // Validate width and height are provided when fill is false
-  if (!width || !height) {
-    // Fall back to placeholder if dimensions are missing
-    return (
-      <div
-        className={`h-full flex items-center justify-center bg-gradient-to-br from-red-600 via-orange-600 to-red-600 ${className}`}
-        style={{ minWidth: 100, minHeight: 100 }}
-      >
-        {fallback || (
-          <AiOutlinePicture className="w-16 h-16 text-white opacity-80" />
-        )}
-      </div>
-    );
-  }
-
   return (
     <Image
       src={src}

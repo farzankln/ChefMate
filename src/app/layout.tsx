@@ -5,7 +5,6 @@ import { Providers } from "@/components/providers/providers";
 import Navigation from "@/components/navigation";
 import { Toaster } from "react-hot-toast";
 import { SavedPostsProvider } from "@/components/SavedPostsProvider";
-import { ErrorBoundary } from "@/components/error-boundary";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,9 +64,7 @@ export default function RootLayout({
       >
         <Providers>
           <Navigation />
-          <SavedPostsProvider>
-            <ErrorBoundary>{children}</ErrorBoundary>
-          </SavedPostsProvider>
+          <SavedPostsProvider>{children}</SavedPostsProvider>
           <Toaster position="top-right" />
         </Providers>
       </body>

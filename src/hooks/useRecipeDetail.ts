@@ -162,10 +162,8 @@ export function useRecipeDetail(recipeId: string): UseRecipeDetailReturn {
     }
 
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // Note: intentionally not including savedPosts in deps to prevent unnecessary re-fetches
-    // The separate effect below handles savedPosts updates
-  }, [recipeId]);
+  }, [recipeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Note: Removed savedPosts dependency to prevent unnecessary re-fetches
 
   // Update recipe with saved posts metadata without triggering re-fetch
   useEffect(() => {

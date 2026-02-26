@@ -1,7 +1,7 @@
 "use client";
 
 import { ContentCard } from "@/components/content-card";
-import { transformSavedPost } from "@/lib/utils/transformSavedPost";
+import { transformSavedPost } from "@/types/utils";
 import type { SavedPostData } from "@/types/utils";
 import { FiTag } from "react-icons/fi";
 
@@ -13,7 +13,7 @@ export default function SavedRecipesList({
   savedPosts,
 }: SavedRecipesListProps) {
   return (
-    <div className="space-y-8 p-8 rounded-2xl shadow-xl bg-white">
+    <div className="space-y-8 p-8 rounded-2xl shadow-xl bg-red-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

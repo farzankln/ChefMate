@@ -27,7 +27,6 @@ export type {
   SpoonacularRandomRecipeResponse,
   PaginationParams,
   PaginatedResponse,
-  ApiResponse,
 } from "./api";
 
 // Database and Prisma types (excluding conflicting types)
@@ -122,15 +121,6 @@ export type {
   NonNullable,
   Awaited,
   Prettify,
-} from "./utils";
-
-// Export new enhanced recipe data types
-export type {
-  ExtendedIngredients,
-  AnalyzedInstruction,
-  NutritionNutrients,
-  NutritionData,
-  OriginalRecipeData,
 } from "./utils";
 
 // Version information

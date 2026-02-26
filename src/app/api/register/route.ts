@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
+    // Validate request method
+    if (req.method !== "POST") {
+      return NextResponse.json(
+        { error: "Method not allowed" },
+        { status: 405 }
+      );
+    }
+
     // Parse and validate request body
     let requestData;
     try {
@@ -11,7 +19,7 @@ export async function POST(req: Request) {
     } catch {
       return NextResponse.json(
         { error: "Invalid JSON in request body" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -21,7 +29,7 @@ export async function POST(req: Request) {
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: "Name, email, and password are required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -30,7 +38,7 @@ export async function POST(req: Request) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -38,7 +46,7 @@ export async function POST(req: Request) {
     if (password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters long" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -50,7 +58,7 @@ export async function POST(req: Request) {
     if (existingUser) {
       return NextResponse.json(
         { error: "User with this email already exists" },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
@@ -85,7 +93,7 @@ export async function POST(req: Request) {
           createdAt: newUser.createdAt,
         },
       },
-      { status: 201 },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
@@ -94,13 +102,13 @@ export async function POST(req: Request) {
     if (error instanceof Error && error.message.includes("Unique constraint")) {
       return NextResponse.json(
         { error: "User with this email already exists" },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

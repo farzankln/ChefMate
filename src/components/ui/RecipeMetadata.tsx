@@ -1,5 +1,5 @@
 import { TimeDisplay } from "./TimeDisplay";
-import { FiUsers, FiClock } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 
 interface RecipeMetadataProps {
   prepTime?: string;
@@ -28,14 +28,14 @@ export function RecipeMetadata({
         <TimeDisplay
           time={prepTime}
           label="Prep"
-          icon={showIcons ? <FiClock className="w-3 h-3" /> : undefined}
+          icon={showIcons ? undefined : undefined}
         />
       )}
       {cookTime && (
         <TimeDisplay
           time={cookTime}
           label="Cook"
-          icon={showIcons ? <FiClock className="w-3 h-3" /> : undefined}
+          icon={showIcons ? undefined : undefined}
         />
       )}
       {servings && (

@@ -39,9 +39,9 @@ export default function RecipeIngredients({ recipe }: RecipeIngredientsProps) {
         </span>
       </div>
       <ul className="space-y-3">
-        {ingredients.map((ing: RecipeIngredient) => (
+        {ingredients.map((ing: RecipeIngredient, i: number) => (
           <li
-            key={`${ing.name}-${ing.amount}-${ing.unit}`}
+            key={i}
             className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <span className="w-2 h-2 bg-green-600 rounded-full mt-2 shrink-0" />

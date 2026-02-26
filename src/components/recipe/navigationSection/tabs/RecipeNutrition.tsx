@@ -54,9 +54,9 @@ export default function RecipeNutrition({ recipe }: RecipeNutritionProps) {
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        {displayedNutrients.map((n: RecipeNutrient) => (
+        {displayedNutrients.map((n: RecipeNutrient, i: number) => (
           <div
-            key={n.name}
+            key={i}
             className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-center mb-2">

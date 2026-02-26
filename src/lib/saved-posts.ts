@@ -1,7 +1,6 @@
 import type { PostData } from "@/types/utils";
 import { prisma } from "@/lib/prisma";
 import { getRecipeById } from "@/lib/spoonacular";
-import type { Prisma } from "@prisma/client";
 
 export function isInternalPostId(postId: string): boolean {
   return postId.length === 24 && /^[0-9a-fA-F]+$/.test(postId);
@@ -37,39 +36,14 @@ export async function getPostDataById(
   }
 }
 
-// Type guard for checking if originalRecipe has extendedIngredients and converting to Prisma InputJsonValue
-function hasExtendedIngredients(
-  data: unknown,
-): data is { extendedIngredients: Prisma.InputJsonValue } {
-  return (
-    typeof data === "object" && data !== null && "extendedIngredients" in data
-  );
-}
-
-// Type guard for checking if originalRecipe has analyzedInstructions and converting to Prisma InputJsonValue
-function hasAnalyzedInstructions(
-  data: unknown,
-): data is { analyzedInstructions: Prisma.InputJsonValue } {
-  return (
-    typeof data === "object" && data !== null && "analyzedInstructions" in data
-  );
-}
-
-// Type guard for checking if originalRecipe has nutrition and converting to Prisma InputJsonValue
-function hasNutrition(
-  data: unknown,
-): data is { nutrition: Prisma.InputJsonValue } {
-  return typeof data === "object" && data !== null && "nutrition" in data;
-}
-
 export function mapPostToSavedPostData(
   postId: string,
   userId: string,
   postData: PostData,
   source: "internal" | "spoonacular",
-): Prisma.SavedPostCreateInput {
+) {
   return {
-    user: { connect: { id: userId } },
+    userId,
     postId,
     title: postData.title || null,
     description: postData.description || null,
@@ -82,15 +56,14 @@ export function mapPostToSavedPostData(
     difficulty: postData.difficulty || null,
     tags: postData.tags || [],
     source,
-    // Extract enhanced recipe data if available using type guards
-    ingredients: hasExtendedIngredients(postData.originalRecipe)
-      ? postData.originalRecipe.extendedIngredients
-      : undefined,
-    instructions: hasAnalyzedInstructions(postData.originalRecipe)
-      ? postData.originalRecipe.analyzedInstructions
-      : undefined,
-    nutrition: hasNutrition(postData.originalRecipe)
-      ? postData.originalRecipe.nutrition
-      : undefined,
+    // Extract enhanced recipe data if available
+    ingredients:
+      (postData.originalRecipe as { extendedIngredients?: unknown })
+        ?.extendedIngredients || null,
+    instructions:
+      (postData.originalRecipe as { analyzedInstructions?: unknown })
+        ?.analyzedInstructions || null,
+    nutrition:
+      (postData.originalRecipe as { nutrition?: unknown })?.nutrition || null,
   };
 }
